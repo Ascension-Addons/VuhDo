@@ -49,7 +49,7 @@ local activeHots, activePets = HealComm.activeHots, HealComm.activePets
 
 -- Figure out what they are now since a few things change based off of this
 local playerClass = select(2, UnitClass("player"))
-local isHealerClass = playerClass == "DRUID" or playerClass == "PRIEST" or playerClass == "SHAMAN" or playerClass == "PALADIN"
+local isHealerClass = playerClass == "DRUID" or playerClass == "PRIEST" or playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "HERO"
 
 -- Stolen from Threat-2.0, compresses GUIDs from 18 characters to around 8 - 9, 50%/55% savings
 -- 44 = , / 58 = : / 255 = \255 / 0 = line break / 64 = @ / 254 = FE, used for escape code so has to be escaped
@@ -593,7 +593,7 @@ local CalculateHealing, GetHealTargets, AuraHandler, CalculateHotHealing, ResetC
 
 -- DRUIDS
 -- All data is accurate as of 3.2.2 (build 10392)
-if( playerClass == "DRUID" ) then
+if( playerClass == "DRUID" or playerClass == "HERO" ) then
 	LoadClassData = function()
 		-- Rejuvenation
 		local Rejuvenation = GetSpellInfo(774)

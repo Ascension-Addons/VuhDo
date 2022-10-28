@@ -596,7 +596,7 @@ function VUHDO_getResurrectionSpells()
 		return VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][1], nil;
 	else
 		if (InCombatLockdown()) then
-			return VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][2], VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][1];
+			return VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][2], VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][1]; --TODO Need to add "return the first resurect spell that you know using ascension known spells functions
 		else
 			return VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][1], VUHDO_RESURRECTION_SPELLS[VUHDO_PLAYER_CLASS][2];
 		end
