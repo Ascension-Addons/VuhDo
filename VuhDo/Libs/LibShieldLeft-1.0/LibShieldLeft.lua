@@ -128,8 +128,8 @@ local Shields = {
         }
     },
     --Hand of protection
-    [GetSpellInfo(5599)] = {
-        name = GetSpellInfo(5599),
+    [GetSpellInfo(1022)] = {
+        name = GetSpellInfo(1022),
         duration = 8,
         order = 0,
         school = 0x01, --physical
