@@ -1,5 +1,5 @@
 local major = "LibHealComm-4.0"
-local minor = 66
+local minor = 70
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -594,118 +594,65 @@ local CalculateHealing, GetHealTargets, AuraHandler, CalculateHotHealing, ResetC
 -- DRUIDS
 -- All data is accurate as of 3.2.2 (build 10392)
 if( playerClass == "DRUID" or playerClass == "HERO" ) then
+	local heroLCD = LoadClassData
 	LoadClassData = function()
+		if heroLCD then
+			heroLCD()
+		end
 		-- Rejuvenation
 		local Rejuvenation = GetSpellInfo(774)
-		hotData[Rejuvenation] = {
-			interval = 3, 
-			ticks = 5, 
-			-- coeff = 0.5,
-			coeff = 0.0677,
-			maxlevels = { 9, 15, 21, 27, 33, 39, 45, 51, 57, 63, 65, 68, 73, 79, 84},
-			averages = { 6, 11, 21, 33, 44, 55, 71, 88, 110, 129, 162, 168, 191, 268, 305},
-			levels = {4, 10, 16, 22, 28, 34, 40, 46, 52, 58, 60, 63, 69, 75, 80}
-			-- averages = {32, 56, 116, 180, 244, 304, 388, 488, 608, 756, 888, 932, 1060, 1192, 1690}
-		}
+		hotData[Rejuvenation] = {interval = 3,
+			levels = {4, 10, 16, 22, 28, 34, 40, 46, 52, 58, 60, 63, 69, 75, 80}, averages = {32, 56, 116, 180, 244, 304, 388, 488, 608, 756, 888, 932, 1060, 1192, 1690}}
 		-- Regrowth
 		local Regrowth = GetSpellInfo(8936)
-		hotData[Regrowth] = {
-			interval = 3, 
-			ticks = 7, 
-			-- coeff = 0.658,
-			coeff = 0.0564,
-			averages = {11, 20, 30, 39, 49, 63, 79, 99, 122, 146, 256, 335},
-			levels = {12, 18, 24, 30, 36, 42, 48, 54, 60, 65, 71, 77}
-			-- averages = {98, 175, 259, 343, 427, 546, 686, 861, 1064, 1274, 1792, 2345}
-		}
-			
+		hotData[Regrowth] = {interval = 3, ticks = 7, coeff = 1.316,
+			levels = {12, 18, 24, 30, 36, 42, 48, 54, 60, 65, 71, 77}, averages = {98, 175, 259, 343, 427, 546, 686, 861, 1064, 1274, 1792, 2345}}
 		-- Lifebloom
 		local Lifebloom = GetSpellInfo(33763)
-		hotData[Lifebloom] = {
-			interval = 1, 
-			ticks = 7, 
-			-- coeff = 0.33313, 
-			-- dhCoeff = 0.17162 * 0.8, 
-			coeff = 0.023,
-			dhCoeff = 0.126,
-			maxlevels = { 71, 79, 84},
-			averages = {26, 41, 53},
-			bomb = {384, 616, 776},
-			levels = {71, 72, 80}
-			-- averages = {224, 287, 371}, 
-			-- bomb = {480, 616, 776}
-		}
+		hotData[Lifebloom] = {interval = 1, ticks = 7, coeff = 0.66626, dhCoeff = 0.34324 * 0.8, levels = {64, 72, 80}, averages = {224, 287, 371}, bomb = {480, 616, 776}}
 		-- Wild Growth
 		local WildGrowth = GetSpellInfo(48438)
-		hotData[WildGrowth] = {
-			interval = 1, 
-			ticks = 7, 
-			-- coeff = 0.4028, 
-			coeff = 0.03452,
-			maxlevels = { 69, 74, 79, 84},
-			averages = { 79, 99, 177, 206},
-			levels = {60, 70, 75, 80}
-			-- averages = {686, 861, 1239, 1442}
-		}
+		hotData[WildGrowth] = {interval = 1, ticks = 7, coeff = 0.8056, levels = {60, 70, 75, 80}, averages = {686, 861, 1239, 1442}}
 		
 		-- Regrowth
-		spellData[Regrowth] = {
-			-- coeff = 0.14335,
+		spellData[Regrowth] = {coeff = 0.2867,
 			levels = hotData[Regrowth].levels,
-			coeff = 0.1616,
-			maxlevels = { 17, 23, 29, 35, 41, 47, 53, 59, 65, 70, 76, 81},
-			levelincrease = { 1.8, 2.5, 3.1, 3.6, 4.1, 4.7, 5.3, 6, 6.8, 7.7, 10.8, 7.7},
-			averages = { avg(66, 78), avg(130, 150), avg(191, 219), avg(254, 288), avg(323, 365), avg(408, 460), avg(516, 579), avg(517, 580), avg(641, 716), avg(971, 1084), avg(1709, 1908), avg(2233, 2494)},
-			-- increase = {122, 155, 173, 180, 180, 178, 169, 156, 136, 115, 97, 23}
-		}
+			averages = {avg(84, 98), avg(164, 188), avg(240, 274), avg(318, 360), avg(405, 457), avg(511, 575), avg(646, 724), avg(809, 905), avg(1003, 1119), avg(1215, 1355), avg(1710, 1908), avg(2234, 2494)},
+			increase = {122, 155, 173, 180, 180, 178, 169, 156, 136, 115, 97, 23}}
 		-- Healing Touch
 		local HealingTouch = GetSpellInfo(5185)
 		spellData[HealingTouch] = {
-			-- coeff = 0.45,
-			coeff = 0.47,
-			maxlevels = { 5, 13, 19, 25, 31, 37, 43, 49, 55, 61, 65, 67, 73, 78, 83},
-			levelincrease = { 0.8, 1.3, 1.9, 2.7, 3, 3.4, 3.9, 4.5, 5.1, 5.7, 6.2, 6.3, 7, 9.8, 11.4},
 			levels = {1, 8, 14, 20, 26, 32, 38, 44, 50, 56, 60, 62, 69, 74, 79},
-			averages = { avg(27, 39), avg(62, 82), avg(137, 176), avg(255, 321), avg(344, 428), avg(447, 552), avg(564, 691), avg(1054, 1283), avg(1142, 1383), avg(1140, 1374), avg(1368, 1649), avg(1425, 1719), avg(1674, 2009), avg(2835, 3418), avg(3299, 3978)}
-		}
+			averages = {avg(37, 51), avg(88, 112), avg(195, 243), avg(363, 445), avg(490, 594), avg(636, 766), avg(802, 960), avg(1199, 1427), avg(1299, 1539), avg(1620, 1912), avg(1944, 2294), avg(2026, 2392), avg(2321, 2739), avg(3223, 3805), avg(3750, 4428)}}
 		-- Nourish
-		-- local Nourish = GetSpellInfo(50464)
-		-- spellData[Nourish] = {coeff = 0.179002, levels = {80}, averages = {avg(1883, 2187)}}
+		local Nourish = GetSpellInfo(50464)
+		spellData[Nourish] = {coeff = 0.358005, levels = {80}, averages = {avg(1883, 2187)}}
 		-- Tranquility
 		local Tranquility = GetSpellInfo(740)
-		spellData[Tranquility] = {
-			-- coeff = 0.5723405, 
-			ticks = 4, 
-			coeff = 0.1616,
-			maxlevels = { 36, 46, 56, 66, 74, 79, 84},
-			levelincrease = { 2.2, 2.6, 3.4, 3.7, 4.5, 4.5, 4.5},
-			avg(280, 281), avg(411, 412), avg(611, 612), avg(877, 878), avg(1214, 1215), avg(2597, 2598), avg(3034, 3035),
-			levels = {30, 40, 50, 60, 70, 75, 80},
-			averages = {351, 515, 765, 1097, 1518, 2598, 3035}
-		}
+		spellData[Tranquility] = {coeff = 1.144681, ticks = 4, levels = {30, 40, 50, 60, 70, 75, 80}, averages = {351, 515, 765, 1097, 1518, 2598, 3035}}
 	
 		-- Talent data, these are filled in later and modified on talent changes
 		-- Master Shapeshifter (Multi)
 		local MasterShapeshifter = GetSpellInfo(48411)
-		talentData[MasterShapeshifter] = {mod = 0.02, current = 0, id = 48411}
+		talentData[MasterShapeshifter] = {mod = 0.02, current = 0}
 		-- Gift of Nature (Add)
 		local GiftofNature = GetSpellInfo(17104)
-		talentData[GiftofNature] = {mod = 0.02, current = 0, id = 17104}
+		talentData[GiftofNature] = {mod = 0.02, current = 0}
 		-- Empowered Touch (Add, increases spell power HT/Nourish gains)
 		local EmpoweredTouch = GetSpellInfo(33879)
-		talentData[EmpoweredTouch] = {mod = 0.2, current = 0, id = 33879}
+		talentData[EmpoweredTouch] = {mod = 0.2, current = 0}
 		-- Empowered Rejuvenation (Multi, this ups both the direct heal and the hot)
 		local EmpoweredRejuv = GetSpellInfo(33886)
-		talentData[EmpoweredRejuv] = {mod = 0.04, current = 0, id = 33886}
+		talentData[EmpoweredRejuv] = {mod = 0.04, current = 0}
 		-- Genesis (Add)
 		local Genesis = GetSpellInfo(57810)
-		talentData[Genesis] = {mod = 0.01, current = 0, id = 57810}
+		talentData[Genesis] = {mod = 0.01, current = 0}
 		-- Improved Rejuvenation (Add)
 		local ImprovedRejuv = GetSpellInfo(17111)
-		talentData[ImprovedRejuv] = {mod = 0.05, current = 0, id = 17111}
+		talentData[ImprovedRejuv] = {mod = 0.05, current = 0}
 		-- Nature's Splendor (+3s Rejuv/+6s Regrowth/+2s Lifebloom)
 		local NaturesSplendor = GetSpellInfo(57865)
-		talentData[NaturesSplendor] = {mod = 1, current = 0, id = 57865}
+		talentData[NaturesSplendor] = {mod = 1, current = 0}
 		
 		local TreeofLife = GetSpellInfo(33891)
 		local Innervate = GetSpellInfo(29166)
@@ -722,278 +669,8 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 		
 		local bloomBombIdols = {[28355] = 87, [33076] = 105, [33841] = 116, [35021] = 131, [42576] = 188, [42577] = 217, [42578] = 246, [42579] = 294, [42580] = 376, [51423] = 448}
 		
-
-		------------------------------------------------------------------------------------------------------------------------------------
-		-- Paladin local variables
-		------------------------------------------------------------------------------------------------------------------------------------
-		
-		-- Hot data, this is just so it realizes that FoL can be a hot so it will call the calculator
-		local FlashofLight = GetSpellInfo(19750)
-		hotData[FlashofLight] = true
-		
-		-- Spell data
-		-- Holy Light
-		local HolyLight = GetSpellInfo(635)
-		spellData[HolyLight] = {
-			-- coeff = 0.445,
-			levels = {1, 6, 14, 22, 30, 38, 46, 54, 60, 62, 70, 75, 80},
-			coeff = 0.448,
-			maxlevels = {5,11,19,27,35,43,51,59,65,67,74,79,84},
-			levelincrease = {0.8, 1.1, 1.7, 2.4, 3.1, 3.8, 4.6, 5.2, 5.8, 6.4, 7, 10.4, 12.1},
-			averages = { avg(35, 44), avg(69, 86), avg(146, 176), avg(285, 332), avg(451, 516), avg(643, 727), avg(870, 983), avg(1148, 1294), avg(1464, 1650), avg(1606, 1810), avg(1938, 2195), avg(3778, 4257), avg(4398, 4955)},
-			-- increase = {63, 81, 112, 139, 155, 159, 156, 135, 116, 115, 70, 52, 0}
-		}
-		-- Flash of Light
-		local FlashofLight = GetSpellInfo(19750)
-		spellData[FlashofLight] = {
-			-- coeff = 0.265,
-			levels = {20, 26, 34, 42, 50, 58, 66, 74, 79},
-			coeff = 0.3,
-			maxlevels = {25,31,39,47,55,63,70,78,83},
-			levelincrease = {1, 1.3, 1.6, 1.9, 2.2, 2.6, 3, 3.4, 3.9},
-			averages = {avg(69, 82), avg(106, 126), avg(162, 184), avg(220, 252), avg(294, 337), avg(384, 437), avg(507, 575), avg(735, 835), avg(847, 961)},
-			-- increase = {60, 70, 73, 72, 66, 57, 42, 20, 3}
-		}
-		
-		-- Talent data
-		-- Need to figure out a way of supporting +6% healing from imp devo aura, might not be able to
-		-- Healing Light (Add)
-		local HealingLight = GetSpellInfo(20237)
-		talentData[HealingLight] = {mod = 0.04, current = 0, id = 20237}
-		-- Divinity (Add)
-		local Divinity = GetSpellInfo(63646)
-		talentData[Divinity] = {mod = 0.01, current = 0, id = 63646}
-		-- Touched by the Light (Add?)
-		local TouchedbytheLight = GetSpellInfo(53592)
-		talentData[TouchedbytheLight] = {mod = 0.10, current = 0, id = 53592}
-		-- 100% of your heal on someone within range of your beacon heals the beacon target too
-		local BeaconofLight = GetSpellInfo(53563)
-		-- 100% chance to crit
-		local DivineFavor = GetSpellInfo(20216)
-		-- Seal of Light + Glyph = 5% healing
-		local SealofLight = GetSpellInfo(20165)
-		-- Divine Illumination, used in T10 holy
-		local DivineIllumination = GetSpellInfo(31842)
-		
-		local flashLibrams = {[42616] = 436, [42615] = 375, [42614] = 331, [42613] = 293, [42612] = 204, [28592] = 89, [25644] = 79, [23006] = 43, [23201] = 28}
-		local holyLibrams = {[45436] = 160, [40268] = 141, [28296] = 47}
-		local flashSPLibrams = {[51472] = 510}
-		
-		-- Holy Shock crits put a hot that heals for 15% of the HS over 9s
-		--itemSetsData["T8 Holy"] = { 45370, 45371, 45372, 45373, 45374, 46178, 46179, 46180, 46181, 46182 }
-		-- +100% to the hot when using Flash of Light + Sacred Shield
-		--itemSetsData["T9 Holy"] = { 48595, 48596, 48597, 48598, 48599, 48564, 48566, 48568, 48572, 48574, 48593, 48591, 48592, 48590, 48594, 48588, 48586, 48587, 48585, 48589, 48576, 48578, 48577, 48579, 48575, 48583, 48581, 48582, 48580, 48584}
-		itemSetsData["T10 Holy"] = {50865, 50866, 50867, 50868, 50869, 51270, 51271, 51272, 51273, 51274, 51165, 51166, 51167, 51168, 51169}
-
-		------------------------------------------------------------------------------------------------------------------------------------
-		-- Priest local variables
-		------------------------------------------------------------------------------------------------------------------------------------
-
-		-- Hot data
-		local Renew = GetSpellInfo(139)
-		hotData[Renew] = {
-			-- coeff = 0.5, 
-			interval = 3, 
-			ticks = 5, 
-			coeff = 0.078,
-			maxlevels = { 13, 19, 25, 31, 37, 43, 49, 55, 61, 65, 69, 74, 79, 84},
-			averages = { 8, 15, 26, 35, 46, 59, 74, 94, 117, 140, 146, 160, 223, 252},
-			levels = {8, 14, 20, 26, 32, 38, 44, 50, 56, 60, 65, 70, 75, 80}, 
-			averages = {45, 100, 175, 245, 315, 400, 510, 650, 810, 970, 1010, 1110, 1235, 1400}}
-		local GlyphofPoH = GetSpellInfo(56161)
-		hotData[GlyphofPoH] = {isMulti = true, interval = 3}
-		
-		-- Spell data
-		-- Greater Heal
-		local GreaterHeal = GetSpellInfo(2060)
-		spellData[GreaterHeal] = {
-			-- coeff = 0.425, 
-			levels = {1, 4, 10, 16, 22, 28, 34, 40, 46, 52, 58, 60, 63, 68, 73, 78}, 
-			-- increase = {71, 83, 112, 153, 185, 208, 207, 204, 197, 184, 165, 162, 142, 111, 92, 30},
-			coeff = 0.444,
-			maxlevels = { 3, 9, 15, 21, 27, 33, 39, 45, 51, 57, 63, 65, 67, 72, 77, 82},
-			levelincrease = { 0.9, 1.1, 1.6, 2.4, 3.2, 4, 4.5, 5.1, 5.8, 6.6, 7.5, 8.1, 8.4, 9.3, 13.2, 15.4},
-			averages = { avg(36, 45), avg(56, 68), avg(107, 125), avg(225, 259), avg(342, 392), avg(452, 514), avg(569, 643), avg(632, 724), avg(808, 921), avg(1011, 1149), avg(1265, 1432), avg(1383, 1566), avg(1459, 1729), avg(1717, 2028), avg(2987, 3538), avg(3475, 4116)}
-		}
-		-- Prayer of Healing
-		local PrayerofHealing = GetSpellInfo(596)
-		spellData[PrayerofHealing] = {
-			-- coeff = 0.1399, 
-			levels = {30, 40, 50, 60, 60, 68, 76}, 
-			-- increase = {65, 64, 60, 48, 50, 33, 18},
-			coeff = 0.1364,
-			maxlevels = { 39, 49, 59, 69, 69, 75, 82, 0},
-			levelincrease = { 1.3, 1.6, 2, 2.4, 2.5, 2.8, 4.7, 0},
-			averages = { avg(208, 225), avg(307, 330), avg(455, 486), avg(650, 692), avg(690, 736), avg(778, 829), avg(1811, 1930), avg(12499, 15000)}
-		}
-		-- Flash Heal
-		local FlashHeal = GetSpellInfo(2061)
-		spellData[FlashHeal] = {
-			-- coeff = 0.215, 
-			levels = {20, 26, 32, 38, 44, 52, 58, 61, 67, 73, 79}, 
-			-- increase = {114, 118, 120, 117, 118, 111, 100, 89, 67, 56, 9},
-			coeff = 0.24,
-			maxlevels = { 25, 31, 37, 43, 49, 55, 61, 65, 71, 78, 84},
-			levelincrease = { 1.9, 2.2, 2.5, 2.8, 3.3, 3.7, 4.2, 4.7, 5.2, 8, 9.7},
-			averages = { avg(154, 190), avg(206, 252), avg(261, 315), avg(319, 382), avg(414, 493), avg(514, 611), avg(649, 767), avg(730, 848), avg(880, 1023), avg(1577, 1832), avg(1886, 2193)}
-		}
-			-- Binding Heal
-			local BindingHeal = GetSpellInfo(32546)
-			spellData[BindingHeal] = {
-				-- coeff = 0.215, 
-				levels = {64, 72, 78}, 
-				coeff = 0.24,
-				maxlevels = { 71, 76, 82},
-				levelincrease = { 4.2, 3, 3.6},
-				averages = { avg(748, 870), avg(1618, 2081), avg(1951, 2508)}, 
-				-- increase = {30, 24, 7}
-			}
-		-- Penance
-		local Penance = GetSpellInfo(53007)
-		spellData[Penance] = {
-			coeff = 0.4285, 
-			ticks = 3, 
-			coeff = 0.1488,
-			maxlevels = { 69, 74, 79, 84},
-			levelincrease = { 4.2, 3, 3.6},
-			levels = {60, 70, 75, 80}, 
-			averages = {avg(354, 400), avg(643, 727), avg(1277, 1442), avg(1483, 1676)}
-		}
-		-- Heal
-		-- local Heal = GetSpellInfo(2054)
-		-- spellData[Heal] = {coeff = 3 / 3.5, levels = {16, 22, 28, 34}, averages = {avg(295, 341), avg(429, 491), avg(566, 642), avg(712, 804)}, increase = {153, 185, 208, 207}}
-		-- -- Lesser Heal
-		-- local LesserHeal = GetSpellInfo(2050)
-		-- spellData[LesserHeal] = {levels = {1, 4, 10}, averages = {avg(46, 56), avg(71, 85), avg(135, 157)}, increase = {71, 83, 112}}
-					
-		-- Talent data
-		local Grace = GetSpellInfo(47517)
-		-- Spiritual Healing (Add)
-		local SpiritualHealing = GetSpellInfo(14898)
-		talentData[SpiritualHealing] = {mod = 0.02, current = 0, id = 14898}
-		-- Empowered Healing (Add, also 0.04 for FH/BH)
-		local EmpoweredHealing = GetSpellInfo(33158)
-		talentData[EmpoweredHealing] = {mod = 0.08, current = 0, id = 33158}
-		-- Blessed Resilience (Add)
-		local BlessedResilience = GetSpellInfo(33142)
-		talentData[BlessedResilience] = {mod = 0.01, current = 0, id = 33142}
-		-- Focused Power (Add)
-		local FocusedPower = GetSpellInfo(33190)
-		talentData[FocusedPower] = {mod = 0.02, current = 0, id = 33190}
-		-- Divine Providence (Add)
-		local DivineProvidence = GetSpellInfo(47567)
-		talentData[DivineProvidence] = {mod = 0.02, current = 0, id = 47567}
-		-- Improved Renew (Add)
-		local ImprovedRenew = GetSpellInfo(14908)
-		talentData[ImprovedRenew] = {mod = 0.05, current = 0, id = 14908}
-		-- Empowered Renew (Multi, spell power)
-		local EmpoweredRenew = GetSpellInfo(63534)
-		talentData[EmpoweredRenew] = {mod = 0.05, current = 0, id = 63534}
-		-- Twin Disciplines (Add)
-		local TwinDisciplines = GetSpellInfo(47586)
-		talentData[TwinDisciplines] = {mod = 0.01, current = 0, id = 47586}
-
-		------------------------------------------------------------------------------------------------------------------------------------
-		-- Shaman local variables
-		------------------------------------------------------------------------------------------------------------------------------------
-
-		-- Hot data
-		-- Riptide
-		local Riptide = GetSpellInfo(61295)
-		hotData[Riptide] = {
-			interval = 3, 
-			ticks = 5, 
-			-- coeff = 0.25, 
-			coeff = 0.054,
-			maxlevels = { 69, 74, 79, 84},
-			averages = { 388, 515, 876, 1215},
-			levels = {60, 70, 75, 80}, 
-			averages = {665, 885, 1435, 1670}
-		}
-		-- Earthliving Weapon proc
-		local Earthliving = GetSpellInfo(52000)
-		hotData[Earthliving] = {
-			interval = 3, 
-			ticks = 4, 
-			-- coeff = 0.40, 
-			coeff = 0.171,
-			maxlevels = { 38, 48, 58, 68, 78, 88},
-			averages = { 16, 23, 31, 49, 64, 163},
-			levels = {30, 40, 50, 60, 70, 80}, 
-			averages = {116, 160, 220, 348, 456, 652}
-		}
-
-		-- Spell data
-		-- Chain Heal
-		local ChainHeal = GetSpellInfo(1064)
-		spellData[ChainHeal] = {
-			-- coeff = 0.35, 
-			levels = {40, 46, 54, 61, 68, 74, 80}, 
-			increase = {100, 95, 85, 72, 45, 22, 0},
-			coeff = 0.356,
-			maxlevels = { 45, 51, 59, 66, 73, 79, 84},
-			levelincrease = { 2.5, 2.8, 3.3, 3.8, 3.8, 3.8, 3.8},
-			averages = { avg(304, 343), avg(384, 433), avg(426, 496), avg(522, 585), avg(581, 675), avg(796, 925), avg(928, 1079)}
-		}
-		-- Healing Wave
-		local HealingWave = GetSpellInfo(331)
-		spellData[HealingWave] = {
-			-- coeff = 0.45, 
-			levels = {1, 6, 12, 18, 24, 32, 40, 48, 56, 60, 63, 70, 75, 80},
-			coeff = 0.444,
-			maxlevels = { 5, 11, 17, 23, 29, 37, 45, 53, 61, 65, 68, 74, 79, 84},
-			levelincrease = { 0.7, 1, 1.5, 2.3, 2.7, 3.3, 3.9, 4.7, 5.5, 5.5, 6.3, 7.1, 8, 9},
-			averages = { avg(24, 33), avg(46, 58), avg(92, 114), avg(192, 231), avg(270, 322), avg(386, 456), avg(532, 624), avg(731, 852), avg(983, 1139), avg(1166, 1351), avg(1342, 1538), avg(1636, 1878), avg(2361, 2734), avg(2730, 3163)},
-			-- increase = {55, 74, 102, 142, 151, 158, 156, 150, 132, 110, 107, 71, 40, 0}
-		}
-		-- Lesser Healing Wave
-		local LesserHealingWave = GetSpellInfo(8004)
-		spellData[LesserHealingWave] = {
-			-- coeff = 0.215, 
-			levels = {20, 28, 36, 44, 52, 60, 66, 72, 77}, 
-			coeff = 0.24,
-			maxlevels = { 25, 33, 41, 49, 57, 65, 70, 76, 81},
-			levelincrease = { 1.7, 2.1, 2.5, 3, 3.6, 4.2, 4.2, 5, 6},
-			averages = { avg(129, 149), avg(197, 225), avg(269, 305), avg(366, 412), avg(504, 564), avg(665, 743), avg(830, 948), avg(1381, 1578), avg(1605, 1834)}
-			-- increase = {102, 109, 110, 108, 100, 84, 58, 40, 18},
-		}		
-			-- Talent data
-		local EarthShield = GetSpellInfo(49284)
-		-- Improved Chain Heal (Multi)
-		local ImpChainHeal = GetSpellInfo(30872)
-		talentData[ImpChainHeal] = {mod = 0.10, current = 0, id = 30872}
-		-- Tidal Waves (Add, this is a buff)
-		local TidalWaves = GetSpellInfo(51562)
-		talentData[TidalWaves] = {mod = 0.04, current = 0, id = 51562}
-		-- Healing Way (Multi, this goes from 8 -> 16 -> 25 so have to manually do the conversion)
-		local HealingWay = GetSpellInfo(29206)
-		talentData[HealingWay] = {mod = 0, current = 0, id = 29206}
-		-- Purification (Add)
-		local Purification = GetSpellInfo(16178)
-		talentData[Purification] = {mod = 0.02, current = 0, id = 16178}
-		
-		-- Set bonuses
-		-- T7 Resto 4 piece, +5% healing on Chain Heal and Healing Wave
-		itemSetsData["T7 Resto"] = {40508, 40509, 40510, 40512, 40513, 39583, 39588, 39589, 39590, 39591}
-		-- T9 Resto 2 piece, +20% healing to Riptide
-		itemSetsData["T9 Resto"] = {48280, 48281, 48282, 48283, 48284, 48295, 48296, 48297, 48298, 48299, 48301, 48302, 48303, 48304, 48300, 48306, 48307, 48308, 48309, 48305, 48286, 48287, 48288, 48289, 48285, 48293, 48292, 48291, 48290, 48294}
-		
-		-- Totems
-		local lhwTotems = {[42598] = 320, [42597] = 267, [42596] = 236, [42595] = 204, [25645] = 79, [22396] = 80, [23200] = 53}	
-		local chTotems = {[45114] = 243, [38368] = 102, [28523] = 87}
-
-
-		------------------------------------------------------------------------------------------------------------------------------------
-		-- Start of Calculators
-		------------------------------------------------------------------------------------------------------------------------------------
-
-		local hotTotals, hasRegrowth = {}, {} -- Druid
-		local activeBeaconGUID, hasDivineFavor -- Pala
-		local activeGraceGUID, activeGraceModifier -- Priest
-		local riptideData, earthshieldList = {}, {} -- Shaman
+		local hotTotals, hasRegrowth = {}, {}
 		AuraHandler = function(unit, guid)
-			-- Druid 
-			-- hots number
 			hotTotals[guid] = 0
 			if( unitHasAura(unit, Rejuvenation) ) then hotTotals[guid] = hotTotals[guid] + 1 end
 			if( unitHasAura(unit, Lifebloom) ) then hotTotals[guid] = hotTotals[guid] + 1 end
@@ -1004,45 +681,6 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 			else
 				hasRegrowth[guid] = nil
 			end
-
-			-- Paladin
-			-- Beacon of Light
-			if( unitHasAura(unit, BeaconofLight) ) then
-				activeBeaconGUID = guid
-			elseif( activeBeaconGUID == guid ) then
-				activeBeaconGUID = nil
-			end
-			-- Check Divine Favor
-			if( unit == "player" ) then
-				hasDivineFavor = unitHasAura("player", DivineFavor)
-			end
-
-			-- Priest
-			-- Grace tracking
-			local stack, _, _, _, caster = select(4, UnitBuff(unit, Grace))
-			if( caster == "player" ) then
-				activeGraceModifier = stack * 0.03
-				activeGraceGUID = guid
-			elseif( activeGraceGUID == guid ) then
-				activeGraceGUID = nil
-			end
-
-
-			-- Shaman
-			-- Keep track of who has riptide on them
-			riptideData[guid] = unitHasAura(unit, Riptide) and true or nil
-			
-			-- Currently, Glyph of Lesser Healing Wave + Any Earth Shield increase the healing not just the players own
-			-- if( UnitBuff(unit, EarthShield) ) then
-			-- 	earthshieldList[guid] = true
-			-- elseif( earthshieldList[guid] ) then
-			-- 	earthshieldList[guid] = nil
-			-- end
-		end
-
-		ResetChargeData = function(guid)
-			hasDivineFavor = unitHasAura("player", DivineFavor)
-			riptideData[guid] = guidToUnit[guid] and unitHasAura(guidToUnit[guid], Riptide) and true or nil
 		end
 	
 		GetHealTargets = function(bitType, guid, healAmount, spellName, hasVariableTicks)
@@ -1058,51 +696,13 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 				end
 				
 				return targets, healAmount
-			
-				------------------------------------------------------------------------------------------------------------------------------------
-				-- Pala HealTargets
-				------------------------------------------------------------------------------------------------------------------------------------
-			elseif( activeBeaconGUID and activeBeaconGUID ~= guid and guidToUnit[activeBeaconGUID] and UnitIsVisible(guidToUnit[activeBeaconGUID]) ) then
-				if type(healAmount) == "table" then
-					return string.format("%s,%s", compressGUID[guid], compressGUID[activeBeaconGUID]), healAmount[1] * 0.40
-				else 
-					return string.format("%s,%s", compressGUID[guid], compressGUID[activeBeaconGUID]), healAmount * 0.40
-				end
-				------------------------------------------------------------------------------------------------------------------------------------
-				-- Priest HealTargets
-				------------------------------------------------------------------------------------------------------------------------------------
-			elseif( spellName == BindingHeal ) then
-				return string.format("%s,%s", compressGUID[guid], compressGUID[playerGUID]), healAmount
-			elseif( spellName == PrayerofHealing ) then
-				local targets = compressGUID[guid]
-				local group = guidToGroup[guid]
-				
-				for groupGUID, id in pairs(guidToGroup) do
-					local unit = guidToUnit[groupGUID]
-					if( id == group and guid ~= groupGUID and UnitIsVisible(unit) and not UnitHasVehicleUI(unit) ) then
-						targets = targets .. "," .. compressGUID[groupGUID]
-					end
-				end
-				
-				return targets, healAmount
-			
-				------------------------------------------------------------------------------------------------------------------------------------
-				-- Shaman HealTargets
-				------------------------------------------------------------------------------------------------------------------------------------
-			-- Glyph of Healing Wave, heals you for 20% of your heal when you heal someone else
-			-- elseif( glyphCache[55440] and guid ~= playerGUID and spellName == HealingWave ) then
-			-- 	return string.format("%s,%d,%s,%d", compressGUID[guid], healAmount, compressGUID[playerGUID], healAmount *  0.20), -1
-
 			elseif( hasVariableTicks ) then
 				healAmount = table.concat(healAmount, "@")
 			end
-
+			
 			return compressGUID[guid], healAmount
 		end
-
-		------------------------------------------------------------------------------------------------------------------------------------
-		-- Start of Hot Calculations
-		------------------------------------------------------------------------------------------------------------------------------------
+		
 		-- Calculate hot heals
 		local wgTicks = {}
 		CalculateHotHealing = function(guid, spellID)
@@ -1110,11 +710,8 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 			local rank = HealComm.rankNumbers[spellRank]
 			local healAmount = hotData[spellName].averages[rank]
 			local spellPower = GetSpellBonusHealing()
-			local healModifier = playerHealModifier
-			local spModifier = hotData[spellName].coeff
-			local interval = hotData[spellName].interval
-			local totalTicks = hotData[spellName].ticks
-			local bombAmount
+			local healModifier, spModifier = playerHealModifier, 1
+			local bombAmount, totalTicks
 			healModifier = healModifier + talentData[GiftofNature].current
 			healModifier = healModifier + talentData[Genesis].current
 					
@@ -1131,21 +728,33 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 			-- Rejuvenation
 			if( spellName == Rejuvenation ) then
 				healModifier = healModifier + talentData[ImprovedRejuv].current
+	
 				-- 25643 - Harold's Rejuvenation Broach, +86 Rejuv SP
 				if( playerCurrentRelic == 25643 ) then
 					spellPower = spellPower + 86
 				-- 22398 - Idol of Rejuvenation, +50 SP to Rejuv
 				elseif( playerCurrentRelic == 22398 ) then
 					spellPower = spellPower + 50
-				end				
+				end
 				
-				spModifier = spModifier * (1 + talentData[EmpoweredRejuv].current)
-				-- spellPower = spellPower / ticks
-				-- healAmount = healAmount / ticks
+				local duration, ticks
+				if( IS_BUILD30300 ) then
+					duration = 15
+					ticks = 5
+					totalTicks = 5
+				else
+					duration = rank > 14 and 15 or 12
+					ticks = duration / hotData[spellName].interval
+					totalTicks = ticks
+				end
+				
+				spellPower = spellPower * (((duration / 15) * 1.88) * (1 + talentData[EmpoweredRejuv].current))
+				spellPower = spellPower / ticks
+				healAmount = healAmount / ticks
 				
 				--38366 - Idol of Pure Thoughts, +33 SP base per tick
 				if( playerCurrentRelic == 38366 ) then
-					healAmount = healAmount + (33 * ticks)
+					spellPower = spellPower + 33
 				end
 
 				-- Nature's Splendor, +6 seconds
@@ -1153,11 +762,11 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 
 			-- Regrowth
 			elseif( spellName == Regrowth ) then
-				spModifier = spModifier * (hotData[spellName].coeff * (1 + talentData[EmpoweredRejuv].current))
-				-- spellPower = spellPower / hotData[spellName].ticks
- 				-- healAmount = healAmount / hotData[spellName].ticks
+				spellPower = spellPower * (hotData[spellName].coeff * (1 + talentData[EmpoweredRejuv].current))
+				spellPower = spellPower / hotData[spellName].ticks
+				healAmount = healAmount / hotData[spellName].ticks
 				
-				-- totalTicks = 7
+				totalTicks = 7
 				-- Nature's Splendor, +6 seconds
 				if( talentData[NaturesSplendor].mod >= 1 ) then totalTicks = totalTicks + 2 end
 				-- T5 Resto, +6 seconds
@@ -1171,14 +780,15 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 					bombSpellPower = bombSpellPower + bloomBombIdols[playerCurrentRelic]
 				end
 				
-				bombAmount = math.ceil(calculateGeneralAmount(hotData[spellName].levels[rank], hotData[spellName].bomb[rank], bombSpellPower, spModifier, healModifier + talentData[GiftofNature].current))
+				local bombSpell = bombSpellPower * (hotData[spellName].dhCoeff * 1.88)
+				bombAmount = math.ceil(calculateGeneralAmount(hotData[spellName].levels[rank], hotData[spellName].bomb[rank], bombSpell, spModifier, healModifier + talentData[GiftofNature].current))
 			
 				-- Figure out the hot tick healing
-				spModifier = spModifier * (hotData[spellName].coeff * (1 + talentData[EmpoweredRejuv].current))
-				-- spellPower = spellPower / hotData[spellName].ticks
- 				-- healAmount = healAmount / hotData[spellName].ticks
+				spellPower = spellPower * (hotData[spellName].coeff * (1 + talentData[EmpoweredRejuv].current))
+				spellPower = spellPower / hotData[spellName].ticks
+				healAmount = healAmount / hotData[spellName].ticks
 				-- Figure out total ticks
-				-- totalTicks = 7
+				totalTicks = 7
 				
 				-- Idol of Lush Moss, +125 SP per tick
 				if( playerCurrentRelic == 40711 ) then
@@ -1194,7 +804,7 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 				if( talentData[NaturesSplendor].mod >= 1 ) then totalTicks = totalTicks + 1 end
 			-- Wild Growth
 			elseif( spellName == WildGrowth ) then
-				spModifier = spModifier * (hotData[spellName].coeff * (1 + talentData[EmpoweredRejuv].current))
+				spellPower = spellPower * (hotData[spellName].coeff * (1 + talentData[EmpoweredRejuv].current))
 				spellPower = spellPower / hotData[spellName].ticks
 				spellPower = calculateSpellPower(hotData[spellName].levels[rank], spellPower)
 				healAmount = healAmount / hotData[spellName].ticks
@@ -1209,63 +819,6 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 
 				return HOT_HEALS, wgTicks, hotData[spellName].ticks, hotData[spellName].interval, nil, true
 			end
-
-			------------------------------------------------------------------------------------------------------------------------------------
-			-- Priest Hot Heals
-			------------------------------------------------------------------------------------------------------------------------------------
-			-- Add grace if it's active on them
-			if( activeGraceGUID == guid and activeGraceModifier ) then
-				healModifier = healModifier + activeGraceModifier
-			end
-			
-			healModifier = healModifier + talentData[FocusedPower].current
-			healModifier = healModifier + talentData[BlessedResilience].current
-			healModifier = healModifier + talentData[SpiritualHealing].current
-			
-			if( spellName == Renew ) then
-				healModifier = healModifier + talentData[ImprovedRenew].current
-				healModifier = healModifier + talentData[TwinDisciplines].current
-				-- Glyph of Renew, one less tick for +25% healing per tick. As this heals the same just faster, it has to be a flat 25% modifier
-				if( glyphCache[55674] ) then
-					healModifier = healModifier + 0.25
-					totalTicks = 4
-				end
-				
-				spellPower = spellPower * (1 + (talentData[EmpoweredRenew].current))
-				-- spellPower = spellPower / hotData[spellName].ticks
- 				-- healAmount = healAmount / hotData[spellName].ticks
-				
-			end
-			------------------------------------------------------------------------------------------------------------------------------------
-			-- Shaman Hot Heals
-			------------------------------------------------------------------------------------------------------------------------------------
-			
-			-- Riptide
-			if( spellName == Riptide ) then
-				if( equippedSetCache["T9 Resto"] >= 2 ) then
-					spModifier = spModifier * 1.20
-				end
-				healModifier = healModifier + talentData[Purification].current
-				
-				-- spellPower = spellPower * (hotData[spellName].coeff * 1.88)
-				-- spellPower = spellPower / hotData[spellName].ticks
- 				-- healAmount = healAmount / hotData[spellName].ticks
-				
-				-- totalTicks = hotData[spellName].ticks
-				-- Glyph of Riptide, +6 seconds
-				if( glyphCache[63273] ) then totalTicks = totalTicks + 2 end
-				
-			-- Earthliving Weapon
-			elseif( spellName == Earthliving ) then
-				healModifier = healModifier + talentData[Purification].current
-
-				-- spellPower = (spellPower * (hotData[spellName].coeff * 1.88) * 0.45)
-				-- spellPower = spellPower / hotData[spellName].ticks
- 				-- healAmount = healAmount / hotData[spellName].ticks
-				
-				-- totalTicks = hotData[spellName].ticks
-			end
-
 	
 			healAmount = calculateGeneralAmount(hotData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
 			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellName].interval, bombAmount
@@ -1298,7 +851,7 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 					healModifier = healModifier * 1.20
 				end
 				
-				spModifier = spModifier * (1 + talentData[EmpoweredRejuv].current)
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) * (1 + talentData[EmpoweredRejuv].current))
 			-- Nourish
 			elseif( spellName == Nourish ) then
 				-- 46138 - Idol of Flourishing Life, +187 Nourish SP
@@ -1324,7 +877,7 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 					healModifier = healModifier * bonus
 				end
 				
-				spModifier = spModifier + talentData[EmpoweredTouch].spent * 0.10
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) + talentData[EmpoweredTouch].spent * 0.10)
 			-- Healing Touch
 			elseif( spellName == HealingTouch ) then
 				-- Glyph of Healing Touch, -50% healing
@@ -1342,18 +895,125 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 	
 				-- Rank 1 - 3: 1.5/2/2.5 cast time, Rank 4+: 3 cast time
 				local castTime = rank > 3 and 3 or rank == 3 and 2.5 or rank == 2 and 2 or 1.5
-				spModifier = spModifier * (((castTime / 3.5) * 1.88) + talentData[EmpoweredTouch].current)
+				spellPower = spellPower * (((castTime / 3.5) * 1.88) + talentData[EmpoweredTouch].current)
 	
 			-- Tranquility
 			elseif( spellName == Tranquility ) then
 				healModifier = healModifier + talentData[Genesis].current
 				
-				spModifier = spModifier * (1 + talentData[EmpoweredRejuv].current)
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) * (1 + talentData[EmpoweredRejuv].current))
+				spellPower = spellPower / spellData[spellName].ticks
 			end
 			
-			------------------------------------------------------------------------------------------------------------------------------------
-			-- Paladin Direct Heals
-			------------------------------------------------------------------------------------------------------------------------------------
+			healAmount = calculateGeneralAmount(spellData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
+			
+			-- 100% chance to crit with Nature, this mostly just covers fights like Loatheb where you will basically have 100% crit
+			if( GetSpellCritChance(4) >= 100 ) then
+				healAmount = healAmount * 1.50
+			end
+			
+			if( spellData[spellName].ticks ) then
+				return CHANNEL_HEALS, math.ceil(healAmount), spellData[spellName].ticks, spellData[spellName].ticks
+			end
+			
+			return DIRECT_HEALS, math.ceil(healAmount)
+		end
+	end
+end
+
+-- PALADINS
+-- All data is accurate as of 3.2.2 (build 10392)
+if( playerClass == "PALADIN" or playerClass == "HERO" ) then
+	local heroLCD = LoadClassData
+	LoadClassData = function()
+		if heroLCD then
+			heroLCD()
+		end
+		-- Hot data, this is just so it realizes that FoL can be a hot so it will call the calculator
+		--local FlashofLight = GetSpellInfo(19750)
+		--hotData[FlashofLight] = true
+		
+		-- Spell data
+		-- Holy Light
+		local HolyLight = GetSpellInfo(635)
+		spellData[HolyLight] = {coeff = 2.5 / 3.5 * 1.25,
+			levels = {1, 6, 14, 22, 30, 38, 46, 54, 60, 62, 70, 75, 80},
+			averages = {avg(50, 60), avg(96, 116), avg(203, 239), avg(397, 455), avg(628, 708), avg(894, 998), avg(1209, 1349), avg(1595, 1777), avg(2034, 2266), avg(2232, 2486), avg(2818, 3138), avg(4199, 4677), avg(4888, 5444)},
+			increase = {63, 81, 112, 139, 155, 159, 156, 135, 116, 115, 70, 52, 0}}
+		-- Flash of Light
+		local FlashofLight = GetSpellInfo(19750)
+		spellData[FlashofLight] = {coeff = 1.5 / 3.5 * 1.25,
+			levels = {20, 26, 34, 42, 50, 58, 66, 74, 79},
+			averages = {avg(81, 93), avg(124, 144), avg(189, 211), avg(256, 288), avg(346, 390), avg(445, 499), avg(588, 658), avg(682, 764), avg(785, 879)},
+			increase = {60, 70, 73, 72, 66, 57, 42, 20, 3}}
+		
+		-- Talent data
+		-- Need to figure out a way of supporting +6% healing from imp devo aura, might not be able to
+		-- Healing Light (Add)
+		local HealingLight = GetSpellInfo(20237)
+		talentData[HealingLight] = {mod = 0.04, current = 0}
+		-- Divinity (Add)
+		local Divinity = GetSpellInfo(63646)
+		talentData[Divinity] = {mod = 0.01, current = 0}
+		-- Touched by the Light (Add?)
+		local TouchedbytheLight = GetSpellInfo(53592)
+		talentData[TouchedbytheLight] = {mod = 0.10, current = 0}
+		-- 100% of your heal on someone within range of your beacon heals the beacon target too
+		local BeaconofLight = GetSpellInfo(53563)
+		-- 100% chance to crit
+		local DivineFavor = GetSpellInfo(20216)
+		-- Seal of Light + Glyph = 5% healing
+		local SealofLight = GetSpellInfo(20165)
+		-- Divine Illumination, used in T10 holy
+		local DivineIllumination = GetSpellInfo(31842)
+		
+		local flashLibrams = {[42616] = 436, [42615] = 375, [42614] = 331, [42613] = 293, [42612] = 204, [28592] = 89, [25644] = 79, [23006] = 43, [23201] = 28}
+		local holyLibrams = {[45436] = 160, [40268] = 141, [28296] = 47}
+		local flashSPLibrams = {[51472] = 510}
+		
+		-- Holy Shock crits put a hot that heals for 15% of the HS over 9s
+		--itemSetsData["T8 Holy"] = { 45370, 45371, 45372, 45373, 45374, 46178, 46179, 46180, 46181, 46182 }
+		-- +100% to the hot when using Flash of Light + Sacred Shield
+		--itemSetsData["T9 Holy"] = { 48595, 48596, 48597, 48598, 48599, 48564, 48566, 48568, 48572, 48574, 48593, 48591, 48592, 48590, 48594, 48588, 48586, 48587, 48585, 48589, 48576, 48578, 48577, 48579, 48575, 48583, 48581, 48582, 48580, 48584}
+		itemSetsData["T10 Holy"] = {50865, 50866, 50867, 50868, 50869, 51270, 51271, 51272, 51273, 51274, 51165, 51166, 51167, 51168, 51169}
+				
+		-- Need the GUID of whoever has beacon on them so we can make sure they are visible to us and so we can check the mapping
+		local activeBeaconGUID, hasDivineFavor
+		AuraHandler = function(unit, guid)
+			if( unitHasAura(unit, BeaconofLight) ) then
+				activeBeaconGUID = guid
+			elseif( activeBeaconGUID == guid ) then
+				activeBeaconGUID = nil
+			end
+			
+			-- Check Divine Favor
+			if( unit == "player" ) then
+				hasDivineFavor = unitHasAura("player", DivineFavor)
+			end
+		end
+		
+		ResetChargeData = function(guid)
+			hasDivineFavor = unitHasAura("player", DivineFavor)
+		end
+	
+		-- Check for beacon when figuring out who to heal
+		GetHealTargets = function(bitType, guid, healAmount, spellName, hasVariableTicks)
+			if( activeBeaconGUID and activeBeaconGUID ~= guid and guidToUnit[activeBeaconGUID] and UnitIsVisible(guidToUnit[activeBeaconGUID]) ) then
+				return string.format("%s,%s", compressGUID[guid], compressGUID[activeBeaconGUID]), healAmount
+			elseif( hasVariableTicks ) then
+				healAmount = table.concat(healAmount, "@")
+			end
+			
+			return compressGUID[guid], healAmount
+		end
+	
+		-- If only every other class was as easy as Paladins
+		CalculateHealing = function(guid, spellName, spellRank)
+			local healAmount = averageHeal[spellName][spellRank]
+			local spellPower = GetSpellBonusHealing()
+			local healModifier, spModifier = playerHealModifier, 1
+			local rank = HealComm.rankNumbers[spellRank]
+			
 			-- Glyph of Seal of Light, +5% healing if the player has Seal of Light up
 			if( glyphCache[54943] and unitHasAura("player", SealofLight) ) then
 				healModifier = healModifier + 0.05
@@ -1388,10 +1048,159 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 				hasDivineFavor = nil
 				healAmount = healAmount * (1.50 * (1 + talentData[TouchedbytheLight].current))
 			end
+			
+			return DIRECT_HEALS, math.ceil(healAmount)
+		end
+	end
+end
 
-			------------------------------------------------------------------------------------------------------------------------------------
-			-- Priest Direct Heals
-			------------------------------------------------------------------------------------------------------------------------------------
+-- PRIESTS
+-- Accurate as of 3.2.2 (build 10392)
+if( playerClass == "PRIEST" or playerClass == "HERO" ) then
+	local heroLCD = LoadClassData
+	LoadClassData = function()
+		if heroLCD then
+			heroLCD()
+		end
+		-- Hot data
+		local Renew = GetSpellInfo(139)
+		hotData[Renew] = {coeff = 1, interval = 3, ticks = 5, levels = {8, 14, 20, 26, 32, 38, 44, 50, 56, 60, 65, 70, 75, 80}, averages = {45, 100, 175, 245, 315, 400, 510, 650, 810, 970, 1010, 1110, 1235, 1400}}
+		--local GlyphofPoH = GetSpellInfo(56161)
+		--hotData[GlyphofPoH] = {isMulti = true, interval = 3}
+		
+		-- Spell data
+		-- Greater Heal
+		local GreaterHeal = GetSpellInfo(2060)
+		spellData[GreaterHeal] = {coeff = 3 / 3.5, levels = {40, 46, 52, 58, 60, 63, 68, 73, 78}, increase = {204, 197, 184, 165, 162, 142, 111, 92, 30},
+			averages = {avg(899, 1013), avg(1149, 1289), avg(1437, 1609), avg(1798, 2006), avg(1966, 2194), avg(2074, 2410), avg(2394, 2784), avg(3395, 3945), avg(3950, 4590)}}
+		-- Prayer of Healing
+		local PrayerofHealing = GetSpellInfo(596)
+		spellData[PrayerofHealing] = {coeff = 0.2798, levels = {30, 40, 50, 60, 60, 68, 76}, increase = {65, 64, 60, 48, 50, 33, 18},
+			averages = {avg(301, 321), avg(444, 472), avg(657, 695), avg(939, 991), avg(997, 1053), avg(1246, 1316), avg(2091, 2209)}}
+		-- Flash Heal
+		local FlashHeal = GetSpellInfo(2061)
+		spellData[FlashHeal] = {coeff = 1.5 / 3.5, levels = {20, 26, 32, 38, 44, 52, 58, 61, 67, 73, 79}, increase = {114, 118, 120, 117, 118, 111, 100, 89, 67, 56, 9},
+			averages = {avg(193, 237), avg(258, 314), avg(327, 393), avg(400, 478), avg(518, 616), avg(644, 764), avg(812, 958), avg(913, 1059), avg(1101, 1279), avg(1578, 1832), avg(1887, 2198)}}
+		-- Binding Heal
+		local BindingHeal = GetSpellInfo(32546)
+		spellData[BindingHeal] = {coeff = 1.5 / 3.5, levels = {64, 72, 78}, averages = {avg(1042, 1338), avg(1619, 2081), avg(1952, 2508)}, increase = {30, 24, 7}}
+		-- Penance
+		local Penance = GetSpellInfo(53007)
+		spellData[Penance] = {coeff = 0.857, ticks = 3, levels = {60, 70, 75, 80}, averages = {avg(670, 756), avg(805, 909), avg(1278, 1442), avg(1484, 1676)}}
+		-- Heal
+		local Heal = GetSpellInfo(2054)
+		spellData[Heal] = {coeff = 3 / 3.5, levels = {16, 22, 28, 34}, averages = {avg(295, 341), avg(429, 491), avg(566, 642), avg(712, 804)}, increase = {153, 185, 208, 207}}
+		-- Lesser Heal
+		local LesserHeal = GetSpellInfo(2050)
+		spellData[LesserHeal] = {levels = {1, 4, 10}, averages = {avg(46, 56), avg(71, 85), avg(135, 157)}, increase = {71, 83, 112}}
+					
+		-- Talent data
+		local Grace = GetSpellInfo(47517)
+		-- Spiritual Healing (Add)
+		local SpiritualHealing = GetSpellInfo(14898)
+		talentData[SpiritualHealing] = {mod = 0.02, current = 0}
+		-- Empowered Healing (Add, also 0.04 for FH/BH)
+		local EmpoweredHealing = GetSpellInfo(33158)
+		talentData[EmpoweredHealing] = {mod = 0.08, current = 0}
+		-- Blessed Resilience (Add)
+		local BlessedResilience = GetSpellInfo(33142)
+		talentData[BlessedResilience] = {mod = 0.01, current = 0}
+		-- Focused Power (Add)
+		local FocusedPower = GetSpellInfo(33190)
+		talentData[FocusedPower] = {mod = 0.02, current = 0}
+		-- Divine Providence (Add)
+		local DivineProvidence = GetSpellInfo(47567)
+		talentData[DivineProvidence] = {mod = 0.02, current = 0}
+		-- Improved Renew (Add)
+		local ImprovedRenew = GetSpellInfo(14908)
+		talentData[ImprovedRenew] = {mod = 0.05, current = 0}
+		-- Empowered Renew (Multi, spell power)
+		local EmpoweredRenew = GetSpellInfo(63534)
+		talentData[EmpoweredRenew] = {mod = 0.05, current = 0}
+		-- Twin Disciplines (Add)
+		local TwinDisciplines = GetSpellInfo(47586)
+		talentData[TwinDisciplines] = {mod = 0.01, current = 0}
+		
+		-- Keep track of who has grace on them
+		local activeGraceGUID, activeGraceModifier
+		AuraHandler = function(unit, guid)
+			local stack, _, _, _, caster = select(4, UnitBuff(unit, Grace))
+			if( caster == "player" ) then
+				activeGraceModifier = stack * 0.03
+				activeGraceGUID = guid
+			elseif( activeGraceGUID == guid ) then
+				activeGraceGUID = nil
+			end
+		end
+		
+		-- Check for beacon when figuring out who to heal
+		GetHealTargets = function(bitType, guid, healAmount, spellName, hasVariableTicks)
+			if( spellName == BindingHeal ) then
+				return string.format("%s,%s", compressGUID[guid], compressGUID[playerGUID]), healAmount
+			elseif( spellName == PrayerofHealing ) then
+				local targets = compressGUID[guid]
+				local group = guidToGroup[guid]
+				
+				for groupGUID, id in pairs(guidToGroup) do
+					local unit = guidToUnit[groupGUID]
+					if( id == group and guid ~= groupGUID and UnitIsVisible(unit) and not UnitHasVehicleUI(unit) ) then
+						targets = targets .. "," .. compressGUID[groupGUID]
+					end
+				end
+				
+				return targets, healAmount
+			elseif( hasVariableTicks ) then
+				healAmount = table.concat(healAmount, "@")
+			end
+			
+			return compressGUID[guid], healAmount
+		end
+		
+		CalculateHotHealing = function(guid, spellID)
+			local spellName, spellRank = GetSpellInfo(spellID)
+			local rank = HealComm.rankNumbers[spellRank]
+			local healAmount = hotData[spellName].averages[rank]
+			local spellPower = GetSpellBonusHealing()
+			local healModifier, spModifier = playerHealModifier, 1
+			local totalTicks
+	
+			-- Add grace if it's active on them
+			if( activeGraceGUID == guid and activeGraceModifier ) then
+				healModifier = healModifier + activeGraceModifier
+			end
+			
+			healModifier = healModifier + talentData[FocusedPower].current
+			healModifier = healModifier + talentData[BlessedResilience].current
+			healModifier = healModifier + talentData[SpiritualHealing].current
+			
+			if( spellName == Renew ) then
+				healModifier = healModifier + talentData[ImprovedRenew].current
+				healModifier = healModifier + talentData[TwinDisciplines].current
+				
+				-- Glyph of Renew, one less tick for +25% healing per tick. As this heals the same just faster, it has to be a flat 25% modifier
+				if( glyphCache[55674] ) then
+					healModifier = healModifier + 0.25
+					totalTicks = 4
+				else
+					totalTicks = 5
+				end
+				
+				spellPower = spellPower * ((hotData[spellName].coeff * 1.88) * (1 + (talentData[EmpoweredRenew].current)))
+				spellPower = spellPower / hotData[spellName].ticks
+				healAmount = healAmount / hotData[spellName].ticks
+				
+			end
+	
+			healAmount = calculateGeneralAmount(hotData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellName].interval
+		end
+	
+		-- If only every other class was as easy as Paladins
+		CalculateHealing = function(guid, spellName, spellRank)
+			local healAmount = averageHeal[spellName][spellRank]
+			local rank = HealComm.rankNumbers[spellRank]
+			local spellPower = GetSpellBonusHealing()
+			local healModifier, spModifier = playerHealModifier, 1
 			
 			-- Add grace if it's active on them
 			if( activeGraceGUID == guid ) then
@@ -1404,14 +1213,14 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 			
 			-- Greater Heal
 			if( spellName == GreaterHeal ) then
-				spModifier = spModifier * (1 + talentData[EmpoweredHealing].current)
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) * (1 + talentData[EmpoweredHealing].current))
 			-- Flash Heal
 			elseif( spellName == FlashHeal ) then
-				spModifier = spModifier * (1 + talentData[EmpoweredHealing].spent * 0.04)
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) * (1 + talentData[EmpoweredHealing].spent * 0.04))
 			-- Binding Heal
 			elseif( spellName == BindingHeal ) then
 				healModifier = healModifier + talentData[DivineProvidence].current
-				spModifier = spModifier * (1 + talentData[EmpoweredHealing].spent * 0.04)
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) * (1 + talentData[EmpoweredHealing].spent * 0.04))
 			-- Penance
 			elseif( spellName == Penance ) then
 				spellPower = spellPower * (spellData[spellName].coeff * 1.88)
@@ -1428,15 +1237,160 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 				local castTime = rank > 3 and 2.5 or rank == 2 and 2 or 1.5
 				spellPower = spellPower * ((castTime / 3.5) * 1.88)
 			end
+			
+			healAmount = calculateGeneralAmount(spellData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
+	
+			-- Player has over a 100% chance to crit with Holy spells
+			if( GetSpellCritChance(2) >= 100 ) then
+				healAmount = healAmount * 1.50
+			end
+					
+			-- Penance ticks 3 times, the player will see all 3 ticks, everyone else should only see the last 2
+			if( spellName == Penance ) then
+				return CHANNEL_HEALS, math.ceil(healAmount), 2, 3
+			end
+					
+			return DIRECT_HEALS, math.ceil(healAmount)
+		end
+	end
+end
 
-			------------------------------------------------------------------------------------------------------------------------------------
-			-- Shaman Direct Heals
-			------------------------------------------------------------------------------------------------------------------------------------
+-- SHAMANS
+-- All spells accurate as of 3.2.2 (build 10392)
+if( playerClass == "SHAMAN" or playerClass == "HERO" ) then
+	local heroLCD = LoadClassData
+	LoadClassData = function()
+		if heroLCD then
+			heroLCD()
+		end
+		-- Hot data
+		-- Riptide
+		local Riptide = GetSpellInfo(61295)
+		hotData[Riptide] = {interval = 3, ticks = 5, coeff = 0.50, levels = {60, 70, 75, 80}, averages = {665, 885, 1435, 1670}}
+		-- Earthliving Weapon proc
+		local Earthliving = GetSpellInfo(52000)
+		hotData[Earthliving] = {interval = 3, ticks = 4, coeff = 0.80, levels = {30, 40, 50, 60, 70, 80}, averages = {116, 160, 220, 348, 456, 652}}
+		
+		-- Spell data
+		-- Chain Heal
+		local ChainHeal = GetSpellInfo(1064)
+		spellData[ChainHeal] = {coeff = 2.5 / 3.5, levels = {40, 46, 54, 61, 68, 74, 80}, increase = {100, 95, 85, 72, 45, 22, 0},
+			averages = {avg(320, 368), avg(405, 465), avg(551, 629), avg(605, 691), avg(826, 942), avg(906, 1034), avg(1055, 1205)}}
+		-- Healing Wave
+		local HealingWave = GetSpellInfo(331)
+		spellData[HealingWave] = {levels = {1, 6, 12, 18, 24, 32, 40, 48, 56, 60, 63, 70, 75, 80},
+			averages = {avg(34, 44), avg(64, 78), avg(129, 155), avg(268, 316), avg(376, 440), avg(536, 622), avg(740, 854), avg(1017, 1167), avg(1367, 1561), avg(1620, 1850), avg(1725, 1969), avg(2134, 2438), avg(2624, 2996), avg(3034, 3466)},
+			increase = {55, 74, 102, 142, 151, 158, 156, 150, 132, 110, 107, 71, 40, 0}}
+		-- Lesser Healing Wave
+		local LesserHealingWave = GetSpellInfo(8004)
+		spellData[LesserHealingWave] = {coeff = 1.5 / 3.5, levels = {20, 28, 36, 44, 52, 60, 66, 72, 77}, increase = {102, 109, 110, 108, 100, 84, 58, 40, 18},
+			averages = {avg(162, 186), avg(247, 281), avg(337, 381), avg(458, 514), avg(631, 705), avg(832, 928), avg(1039, 1185), avg(1382, 1578), avg(1606, 1834)}}
+		
+		-- Talent data
+		local EarthShield = GetSpellInfo(49284)
+		-- Improved Chain Heal (Multi)
+		local ImpChainHeal = GetSpellInfo(30872)
+		talentData[ImpChainHeal] = {mod = 0.10, current = 0}
+		-- Tidal Waves (Add, this is a buff)
+		local TidalWaves = GetSpellInfo(51566)
+		talentData[TidalWaves] = {mod = 0.04, current = 0}
+		-- Healing Way (Multi, this goes from 8 -> 16 -> 25 so have to manually do the conversion)
+		local HealingWay = GetSpellInfo(29206)
+		talentData[HealingWay] = {mod = 0, current = 0}
+		-- Purification (Add)
+		local Purification = GetSpellInfo(16178)
+		talentData[Purification] = {mod = 0.02, current = 0}
+		
+		-- Set bonuses
+		-- T7 Resto 4 piece, +5% healing on Chain Heal and Healing Wave
+		itemSetsData["T7 Resto"] = {40508, 40509, 40510, 40512, 40513, 39583, 39588, 39589, 39590, 39591}
+		-- T9 Resto 2 piece, +20% healing to Riptide
+		itemSetsData["T9 Resto"] = {48280, 48281, 48282, 48283, 48284, 48295, 48296, 48297, 48298, 48299, 48301, 48302, 48303, 48304, 48300, 48306, 48307, 48308, 48309, 48305, 48286, 48287, 48288, 48289, 48285, 48293, 48292, 48291, 48290, 48294}
+		
+		-- Totems
+		local lhwTotems = {[42598] = 320, [42597] = 267, [42596] = 236, [42595] = 204, [25645] = 79, [22396] = 80, [23200] = 53}	
+		local chTotems = {[45114] = 243, [38368] = 102, [28523] = 87}
+		
+		-- Keep track of who has riptide on them
+		local riptideData, earthshieldList = {}, {}
+		AuraHandler = function(unit, guid)
+			riptideData[guid] = unitHasAura(unit, Riptide) and true or nil
+			
+			-- Currently, Glyph of Lesser Healing Wave + Any Earth Shield increase the healing not just the players own
+			if( UnitBuff(unit, EarthShield) ) then
+				earthshieldList[guid] = true
+			elseif( earthshieldList[guid] ) then
+				earthshieldList[guid] = nil
+			end
+		end
+		
+		-- Cast was interrupted, recheck if we still have the auras up
+		ResetChargeData = function(guid)
+			riptideData[guid] = guidToUnit[guid] and unitHasAura(guidToUnit[guid], Riptide) and true or nil
+		end
+		
+		-- Lets a specific override on how many people this will hit
+		GetHealTargets = function(bitType, guid, healAmount, spellName, hasVariableTicks)
+			-- Glyph of Healing Wave, heals you for 20% of your heal when you heal someone else
+			if( glyphCache[55440] and guid ~= playerGUID and spellName == HealingWave ) then
+				return string.format("%s,%d,%s,%d", compressGUID[guid], healAmount, compressGUID[playerGUID], healAmount *  0.20), -1
+			elseif( hasVariableTicks ) then
+				healAmount = table.concat(healAmount, "@")
+			end
+		
+			return compressGUID[guid], healAmount
+		end
+		
+		CalculateHotHealing = function(guid, spellID)
+			local spellName, spellRank = GetSpellInfo(spellID)
+			local rank = HealComm.rankNumbers[spellRank]
+			local healAmount = hotData[spellName].averages[rank]
+			local spellPower = GetSpellBonusHealing()
+			local healModifier, spModifier = playerHealModifier, 1
+			local totalTicks
+	
+			healModifier = healModifier + talentData[Purification].current
+			
+			-- Riptide
+			if( spellName == Riptide ) then
+				if( equippedSetCache["T9 Resto"] >= 2 ) then
+					spModifier = spModifier * 1.20
+				end
+				
+				spellPower = spellPower * (hotData[spellName].coeff * 1.88)
+				spellPower = spellPower / hotData[spellName].ticks
+				healAmount = healAmount / hotData[spellName].ticks
+				
+				totalTicks = hotData[spellName].ticks
+				-- Glyph of Riptide, +6 seconds
+				if( glyphCache[63273] ) then totalTicks = totalTicks + 2 end
+				
+			-- Earthliving Weapon
+			elseif( spellName == Earthliving ) then
+				spellPower = (spellPower * (hotData[spellName].coeff * 1.88) * 0.45)
+				spellPower = spellPower / hotData[spellName].ticks
+				healAmount = healAmount / hotData[spellName].ticks
+				
+				totalTicks = hotData[spellName].ticks
+			end
+			
+			healAmount = calculateGeneralAmount(hotData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
+			return HOT_HEALS, healAmount, totalTicks, hotData[spellName].interval
+		end
+	
+		
+		-- If only every other class was as easy as Paladins
+		CalculateHealing = function(guid, spellName, spellRank)
+			local healAmount = averageHeal[spellName][spellRank]
+			local rank = HealComm.rankNumbers[spellRank]
+			local spellPower = GetSpellBonusHealing()
+			local healModifier, spModifier = playerHealModifier, 1
+			
+			healModifier = healModifier + talentData[Purification].current
 			
 			-- Chain Heal
 			if( spellName == ChainHeal ) then
 				healModifier = healModifier * (1 + talentData[ImpChainHeal].current)
-				healModifier = healModifier + talentData[Purification].current
 				healAmount = healAmount + (playerCurrentRelic and chTotems[playerCurrentRelic] or 0)			
 	
 				if( equippedSetCache["T7 Resto"] >= 4 ) then
@@ -1453,7 +1407,7 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 			-- Heaing Wave
 			elseif( spellName == HealingWave ) then
 				healModifier = healModifier * (talentData[HealingWay].spent == 3 and 1.25 or talentData[HealingWay].spent == 2 and 1.16 or talentData[HealingWay].spent == 1 and 1.08 or 1)
-				healModifier = healModifier + talentData[Purification].current
+				
 				if( equippedSetCache["T7 Resto"] >= 4 ) then
 					healModifier = healModifier * 1.05
 				end
@@ -1464,7 +1418,7 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 				end
 				
 				local castTime = rank > 3 and 3 or rank == 3 and 2.5 or rank == 2 and 2 or 1.5
-				spModifier = spModifier * (((castTime / 3.5) * 1.88) + talentData[TidalWaves].current)
+				spellPower = spellPower * (((castTime / 3.5) * 1.88) + talentData[TidalWaves].current)
 							
 			-- Lesser Healing Wave
 			elseif( spellName == LesserHealingWave ) then
@@ -1472,31 +1426,23 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 				if( glyphCache[55438] and earthshieldList[guid] ) then
 					healModifier = healModifier * 1.20
 				end
-				healModifier = healModifier + talentData[Purification].current
 				
 				spellPower = spellPower + (playerCurrentRelic and lhwTotems[playerCurrentRelic] or 0)
-				spModifier = spModifier * ((spellData[spellName].coeff * 1.88) + talentData[TidalWaves].spent * 0.02)
+				spellPower = spellPower * ((spellData[spellName].coeff * 1.88) + talentData[TidalWaves].spent * 0.02)
 			end
-
-			------------------------------------------------------------------------------------------------------------------------------------
-
-
-			healAmount = calculateGeneralAmount(spellData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
 			
-			-- 100% chance to crit with Nature, this mostly just covers fights like Loatheb where you will basically have 100% crit
+			healAmount = calculateGeneralAmount(spellData[spellName].levels[rank], healAmount, spellPower, spModifier, healModifier)
+	
+			-- Player has over a 100% chance to crit with Nature spells
 			if( GetSpellCritChance(4) >= 100 ) then
 				healAmount = healAmount * 1.50
 			end
 			
-			if( spellData[spellName].ticks ) then
-				return CHANNEL_HEALS, math.ceil(healAmount), spellData[spellName].ticks, spellData[spellName].ticks
-			end
-			
+			-- Apply the final modifier of any MS or self heal increasing effects
 			return DIRECT_HEALS, math.ceil(healAmount)
 		end
 	end
 end
-
 
 local function getName(spellID)
 	local name = GetSpellInfo(spellID)
@@ -1805,22 +1751,12 @@ end
 
 -- Cache player talent data for spells we need
 function HealComm:PLAYER_TALENT_UPDATE()
-	-- for tabIndex=1, GetNumTalentTabs() do
-	-- 	for i=1, GetNumTalents(tabIndex) do
-	-- 		local name, _, _, _, spent = GetTalentInfo(tabIndex, i)
-	-- 		if( name and talentData[name] ) then
-	-- 			talentData[name].current = talentData[name].mod * spent
-	-- 			talentData[name].spent = spent
-	-- 		end
-	-- 	end
-	-- end
-	for k, v in pairs(talentData) do
-		if (talentData[k].id) then 
-			local rank, _,_,_,_,_  = CA_GetTalentInfo(talentData[k].id)
-			if (rank) then 
-				--print (k .. " is rank " .. rank)
-				talentData[k].current = talentData[k].mod * rank
-				talentData[k].spent = rank
+	for tabIndex=1, GetNumTalentTabs() do
+		for i=1, GetNumTalents(tabIndex) do
+			local name, _, _, _, spent = GetTalentInfo(tabIndex, i)
+			if( name and talentData[name] ) then
+				talentData[name].current = talentData[name].mod * spent
+				talentData[name].spent = spent
 			end
 		end
 	end
@@ -2224,13 +2160,8 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventType, sourceGUID, 
 			local amount, stack, endTime, ticksLeft = getRecord(pending, destGUID)
 			ticksLeft = ticksLeft - 1
 			endTime = GetTime() + pending.tickInterval * ticksLeft
-			if( pending.hasVariableTicks ) then 
-				if (type(amount) == "table") then 
-					table.remove(amount, 1) 
-				else 
-					amount = {}
-				end
-			end
+			if( pending.hasVariableTicks ) then table.remove(amount, 1) end
+			
 			updateRecord(pending, destGUID, amount, stack, endTime, ticksLeft)
 			
 			if( pending.isMultiTarget ) then
