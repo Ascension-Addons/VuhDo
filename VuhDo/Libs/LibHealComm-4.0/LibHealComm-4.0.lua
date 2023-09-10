@@ -1266,7 +1266,7 @@ if( playerClass == "SHAMAN" or playerClass == "HERO" ) then
 		-- Hot data
 		-- Riptide
 		local Riptide = GetSpellInfo(61295)
-		hotData[Riptide] = {interval = 3, ticks = 5, coeff = 0.50, levels = {60, 70, 75, 80}, averages = {665, 885, 1435, 1670}}
+		hotData[Riptide] = {interval = 3, ticks = 5, coeff = 0.50, levels = { 20, 28, 36, 44, 52, 60, 70, 75, 80 }, averages = { 105, 145, 185, 225, 265, 310, 530, 1085, 1255 }}
 		-- Earthliving Weapon proc
 		local Earthliving = GetSpellInfo(52000)
 		hotData[Earthliving] = {interval = 3, ticks = 4, coeff = 0.80, levels = {30, 40, 50, 60, 70, 80}, averages = {116, 160, 220, 348, 456, 652}}
