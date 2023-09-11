@@ -307,14 +307,300 @@
         </Frames>
       </Frame>
 
+ <Frame name="$parentRDFIconPanel" inherits="VuhDoPanelTemplate">
+	<Size>
+		<AbsDimension x="260" y="145" />
+	</Size>
+	<Anchors>
+		<Anchor point="TOPLEFT">
+			<Offset>
+				<AbsDimension x="265" y="-20" />
+			</Offset>
+		</Anchor>
+	</Anchors>
+	<Frames>
+
+		<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+			<Size>
+				<AbsDimension x="185" y="18" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="13" y="-7" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Layers>
+				<Layer>
+					<FontString name="$parentLabel" text="RDF Role Icon" inherits="VuDoDefaultTitleFontTemplate">
+					</FontString>
+				</Layer>
+			</Layers>
+		</Frame>
+
+		<CheckButton name="$parentEnableRDFIconsButton" text="VUHDO_I18N_ENABLE" inherits="VuhDoCheckButtonTemplate">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="15" y="-30" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnLoad>
+			      		VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.show");
+					      					<!-- VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_309); -->
+				</OnLoad>
+			</Scripts>
+		</CheckButton>
+
+		<CheckButton name="$parentgroupOnlyRDFIconsButton" text="Group" inherits="VuhDoCheckButtonTemplate">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						
+						<AbsDimension x="15" y="-65" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnLoad>
+			      		VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.groupOnly");
+					      					<!-- VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_309); -->
+				</OnLoad>
+			</Scripts>
+		</CheckButton>
+
+		<CheckButton name="$parentMouseOnlyRDFIconsButton" text="Mouseover" inherits="VuhDoCheckButtonTemplate">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="15" y="-100" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnLoad>
+			      		VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.mouseOnly");
+					      					<!-- VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_309); -->
+				</OnLoad>
+			</Scripts>
+		</CheckButton>
+
+		<Frame name="$parentTexture" inherits="VuhDoBarExampleTexture">
+			<Size>
+				<AbsDimension x="100" y="64" />
+			</Size>
+
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="125" y="-25" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Layers>
+				<Layer>
+					<FontString name="$parentTitleString" text="VUHDO_I18N_IHEALTH_BARI" inherits="VuDoWhiteFontTemplate">
+						<Size>
+							<AbsDimension x="0" y="0" />
+						</Size>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset>
+									<AbsDimension x="0" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</FontString>
+				</Layer>
+			</Layers>
+			<Frames>
+				<CheckButton name="$parentTopLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-10" y="10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "TOPLEFT");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_392);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentTopRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="75" y="10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "TOPRIGHT");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_393);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentBottomLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-10" y="-44" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "BOTTOMLEFT");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_394);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentBottomRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="75" y="-44" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "BOTTOMRIGHT");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_395);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-10" y="-17" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "LEFT");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_396);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentTopRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="33" y="10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "TOP");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_397);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentBottomRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="33" y="-44" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "BOTTOM");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_398);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+
+				<CheckButton name="$parentRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="75" y="-17" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.point", "RIGHT");
+					      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_399);
+						</OnLoad>
+					</Scripts>
+				</CheckButton>
+			</Frames>
+			<Scripts>
+				<OnShow>VUHDO_lnfPatchFont(self, "TitleString")</OnShow>
+			</Scripts>
+		</Frame>
+
+		<Frame name="$parentYAdjustSlider" inherits="VuhDoVSliderTemplate">
+			<Size>
+				<AbsDimension x="18" y="85" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="235" y="-20" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnLoad>
+			      		VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.yAdjust");
+						    VUHDO_lnfSliderOnLoad(self, "Y", -100, 100, "%", 2);
+					    	VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_401);
+				</OnLoad>
+			</Scripts>
+		</Frame>
+
+		<Frame name="$parentXAdjustSlider" inherits="VuhDoHSliderTemplate">
+			<Size>
+				<AbsDimension x="100" y="80" />
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="125" y="-80" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnLoad>
+			      		VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.RDF_ICON.xAdjust");
+						    VUHDO_lnfSliderOnLoad(self, "X", -100, 100, "%", 2);
+					    	VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_400);
+				</OnLoad>
+			</Scripts>
+		</Frame>
+	</Frames>
+</Frame>
+
+
       <Frame name="$parentOverhealTextPanel" inherits="VuhDoPanelTemplate">
         <Size>
-          <AbsDimension x="240" y="240" />
+          <AbsDimension x="260" y="230" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="280" y="-150" />
+              <AbsDimension x="265" y="-170" />
             </Offset>
           </Anchor>
         </Anchors>
