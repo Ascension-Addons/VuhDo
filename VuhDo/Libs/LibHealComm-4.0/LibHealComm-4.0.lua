@@ -634,25 +634,25 @@ if( playerClass == "DRUID" or playerClass == "HERO" ) then
 		-- Talent data, these are filled in later and modified on talent changes
 		-- Master Shapeshifter (Multi)
 		local MasterShapeshifter = GetSpellInfo(48411)
-		talentData[MasterShapeshifter] = {mod = 0.02, current = 0}
+		talentData[MasterShapeshifter] = {mod = 0.02, current = 0, spent = 0, id = 48411}
 		-- Gift of Nature (Add)
 		local GiftofNature = GetSpellInfo(17104)
-		talentData[GiftofNature] = {mod = 0.02, current = 0}
+		talentData[GiftofNature] = {mod = 0.02, current = 0, spent = 0, id = 17104}
 		-- Empowered Touch (Add, increases spell power HT/Nourish gains)
 		local EmpoweredTouch = GetSpellInfo(33879)
-		talentData[EmpoweredTouch] = {mod = 0.2, current = 0}
+		talentData[EmpoweredTouch] = {mod = 0.2, current = 0, spent = 0, id = 33879}
 		-- Empowered Rejuvenation (Multi, this ups both the direct heal and the hot)
 		local EmpoweredRejuv = GetSpellInfo(33886)
-		talentData[EmpoweredRejuv] = {mod = 0.04, current = 0}
+		talentData[EmpoweredRejuv] = {mod = 0.04, current = 0, spent = 0, id = 33886}
 		-- Genesis (Add)
 		local Genesis = GetSpellInfo(57810)
-		talentData[Genesis] = {mod = 0.01, current = 0}
+		talentData[Genesis] = {mod = 0.01, current = 0, spent = 0, id = 57810}
 		-- Improved Rejuvenation (Add)
 		local ImprovedRejuv = GetSpellInfo(17111)
-		talentData[ImprovedRejuv] = {mod = 0.05, current = 0}
+		talentData[ImprovedRejuv] = {mod = 0.05, current = 0, spent = 0, id = 17111}
 		-- Nature's Splendor (+3s Rejuv/+6s Regrowth/+2s Lifebloom)
 		local NaturesSplendor = GetSpellInfo(57865)
-		talentData[NaturesSplendor] = {mod = 1, current = 0}
+		talentData[NaturesSplendor] = {mod = 1, current = 0, spent = 0, id = 57865}
 		
 		local TreeofLife = GetSpellInfo(33891)
 		local Innervate = GetSpellInfo(29166)
@@ -1097,29 +1097,29 @@ if( playerClass == "PRIEST" or playerClass == "HERO" ) then
 		-- Talent data
 		local Grace = GetSpellInfo(47517)
 		-- Spiritual Healing (Add)
-		local SpiritualHealing = GetSpellInfo(14898)
-		talentData[SpiritualHealing] = {mod = 0.02, current = 0}
+		local SpiritualHealing = GetSpellInfo()
+		talentData[SpiritualHealing] = {mod = 0.02, current = 0, spent = 0, id = 14898}
 		-- Empowered Healing (Add, also 0.04 for FH/BH)
-		local EmpoweredHealing = GetSpellInfo(33158)
-		talentData[EmpoweredHealing] = {mod = 0.08, current = 0}
+		local EmpoweredHealing = GetSpellInfo()
+		talentData[EmpoweredHealing] = {mod = 0.08, current = 0, spent = 0, id = 33158}
 		-- Blessed Resilience (Add)
 		local BlessedResilience = GetSpellInfo(33142)
-		talentData[BlessedResilience] = {mod = 0.01, current = 0}
+		talentData[BlessedResilience] = {mod = 0.01, current = 0, spent = 0, id = 33142}
 		-- Focused Power (Add)
 		local FocusedPower = GetSpellInfo(33190)
-		talentData[FocusedPower] = {mod = 0.02, current = 0}
+		talentData[FocusedPower] = {mod = 0.02, current = 0, spent = 0, id = 33190}
 		-- Divine Providence (Add)
 		local DivineProvidence = GetSpellInfo(47567)
-		talentData[DivineProvidence] = {mod = 0.02, current = 0}
+		talentData[DivineProvidence] = {mod = 0.02, current = 0, spent = 0, id = 47567}
 		-- Improved Renew (Add)
 		local ImprovedRenew = GetSpellInfo(14908)
-		talentData[ImprovedRenew] = {mod = 0.05, current = 0}
+		talentData[ImprovedRenew] = {mod = 0.05, current = 0, spent = 0, id = 14908}
 		-- Empowered Renew (Multi, spell power)
 		local EmpoweredRenew = GetSpellInfo(63534)
-		talentData[EmpoweredRenew] = {mod = 0.05, current = 0}
+		talentData[EmpoweredRenew] = {mod = 0.05, current = 0, spent = 0, id = 63534}
 		-- Twin Disciplines (Add)
 		local TwinDisciplines = GetSpellInfo(47586)
-		talentData[TwinDisciplines] = {mod = 0.01, current = 0}
+		talentData[TwinDisciplines] = {mod = 0.01, current = 0, spent = 0, id = 47586}
 		
 		-- Keep track of who has grace on them
 		local activeGraceGUID, activeGraceModifier
@@ -1290,16 +1290,16 @@ if( playerClass == "SHAMAN" or playerClass == "HERO" ) then
 		local EarthShield = GetSpellInfo(49284)
 		-- Improved Chain Heal (Multi)
 		local ImpChainHeal = GetSpellInfo(30872)
-		talentData[ImpChainHeal] = {mod = 0.10, current = 0}
+		talentData[ImpChainHeal] = {mod = 0.10, current = 0, spent = 0, id = 30872}
 		-- Tidal Waves (Add, this is a buff)
 		local TidalWaves = GetSpellInfo(51566)
-		talentData[TidalWaves] = {mod = 0.04, current = 0}
+		talentData[TidalWaves] = {mod = 0.04, current = 0, spent = 0, id = 51566}
 		-- Healing Way (Multi, this goes from 8 -> 16 -> 25 so have to manually do the conversion)
 		local HealingWay = GetSpellInfo(29206)
-		talentData[HealingWay] = {mod = 0, current = 0}
+		talentData[HealingWay] = {mod = 0, current = 0, spent = 0, id = 29206}
 		-- Purification (Add)
 		local Purification = GetSpellInfo(16178)
-		talentData[Purification] = {mod = 0.02, current = 0}
+		talentData[Purification] = {mod = 0.02, current = 0, spent = 0, id = 16178}
 		
 		-- Set bonuses
 		-- T7 Resto 4 piece, +5% healing on Chain Heal and Healing Wave
@@ -1751,12 +1751,12 @@ end
 
 -- Cache player talent data for spells we need
 function HealComm:PLAYER_TALENT_UPDATE()
-	for tabIndex=1, GetNumTalentTabs() do
-		for i=1, GetNumTalents(tabIndex) do
-			local name, _, _, _, spent = GetTalentInfo(tabIndex, i)
-			if( name and talentData[name] ) then
-				talentData[name].current = talentData[name].mod * spent
-				talentData[name].spent = spent
+	for k, v in pairs(talentData) do
+		if (talentData[k].id) then 
+			local rank, _,_,_,_,_  = CA_GetTalentInfo(talentData[k].id)
+			if (rank and rank > 0) then 
+				talentData[k].current = talentData[k].mod * rank
+				talentData[k].spent = rank
 			end
 		end
 	end
@@ -2160,8 +2160,13 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventType, sourceGUID, 
 			local amount, stack, endTime, ticksLeft = getRecord(pending, destGUID)
 			ticksLeft = ticksLeft - 1
 			endTime = GetTime() + pending.tickInterval * ticksLeft
-			if( pending.hasVariableTicks ) then table.remove(amount, 1) end
-			
+			if( pending.hasVariableTicks ) then 
+				if (type(amount) == "table") then 
+					table.remove(amount, 1) 
+				else 
+					amount = {}
+				end
+			end
 			updateRecord(pending, destGUID, amount, stack, endTime, ticksLeft)
 			
 			if( pending.isMultiTarget ) then
