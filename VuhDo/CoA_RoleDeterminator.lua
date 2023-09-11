@@ -1,4 +1,7 @@
 --- COA W.I.P. ---
+
+-- TODO: ADAPT FUNCTIONS TO DRAGONFLIGHT TREES
+
 local COA_ROLE_BY_SPEC = {}
 local COA_ROLE_BY_CLASS = {}
 
@@ -181,7 +184,12 @@ local function CoA_Determine_Role_By_Class(anInfo)
 end
 
 function CoA_Determine_Role(anInfo)
-	if not IsCustomClass(anInfo["unit"]) then return end
+	if not IsCustomClass(anInfo["unit"]) then 
+		return
+	end
+	if not SpellKitAdvanced then
+		return
+	end
 
 	local results = (CoA_Determine_Role_By_Class(anInfo) or CoA_Determine_Role_By_Specialization(anInfo) or CoA_Determine_Role_By_Talents(anInfo))
 
