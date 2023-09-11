@@ -54,6 +54,7 @@
   <Script file="VuhDoPlayerTargetEventHandler.lua" />
   <Script file="VuhDoDcShield.lua" />
   <Script file="VuhDo.lua" />
+  <Script file="CoA_RoleDeterminator.lua"/>
 
   <Script file="VuhDoNewOptionsSpellFireShared.lua" />
   <Script file="VuhDoNewOptionsGeneralSkinsShared.lua" />

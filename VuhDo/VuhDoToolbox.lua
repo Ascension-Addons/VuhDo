@@ -23,6 +23,25 @@ local _ = _;
 
 
 
+
+local function CA_message(...)
+	local x = {...};
+	for k,v in pairs(x) do
+		DEFAULT_CHAT_FRAME:AddMessage("|cff00FF7F[DEBUG]|r "..tostring(v));
+	end
+end
+
+local function CA_debug(...)
+	if(VUHDO_DEBUG) then
+		CA_message(...)
+	end
+end
+
+function CA_debug_from(caller,msg,color)
+	if not color then color  = "6FA8DC" end
+	CA_debug("|cff"..color.."["..caller.."]|r "..msg)
+end
+
 -- returns an array of numbers sequentially found in a string
 local tCnt;
 local tNumbers = { };
@@ -697,3 +716,73 @@ function VUHDO_utf8Cut(aString, aNumChars)
 
 	return strsub(aString, 1, tNumCut - 1);
 end
+
+
+
+function PlaceRDFIcon(aButton,tIcon,callerFunctionName,debugHeaderTextcolor)
+	local tRole = VUHDO_determineRole(aButton['raidid'])
+	local tMouseOverUnit = VUHDO_getCurrentMouseOver();
+	if (tRole ~= nil) then
+		tIcon:SetWidth(25);
+		tIcon:SetHeight(25);
+		if (VUHDO_ID_MELEE_TANK == tRole) then
+			tIcon:SetTexCoord(GetTexCoordsForRole("TANK"));
+		elseif (VUHDO_ID_RANGED_HEAL == tRole) then
+			tIcon:SetTexCoord(GetTexCoordsForRole("HEALER"));
+		else
+			tIcon:SetTexCoord(GetTexCoordsForRole("DAMAGER"));
+		end
+		
+		tIcon:Show()
+		-- VUHDO_placeRDF_ICON(aButton, tIcon);
+
+
+		if (not VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["groupOnly"]) then
+			CA_debug_from(callerFunctionName,"NO GROUP NEEDED",debugHeaderTextcolor)
+			if (VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["mouseOnly"]) then 
+				CA_debug_from(callerFunctionName,"MOUSEOVER NEEDED",debugHeaderTextcolor)
+				if tMouseOverUnit then 
+					-- SHOW
+					CA_debug_from(callerFunctionName,"SHOWING ICON",debugHeaderTextcolor)
+					tIcon:Show()
+					
+				else
+					-- NO MOUSEOVER
+					CA_debug_from(callerFunctionName,"HIDING ICON : NO MOUSEOVER",debugHeaderTextcolor)
+						tIcon:Hide()
+				end
+			else
+				CA_debug_from(callerFunctionName,"NO MOUSEOVER NEEDED ".. "SHOWING ICON",debugHeaderTextcolor)
+				-- CA_debug_local(caller,"SHOWING ICON")
+				tIcon:Show()
+				
+			end
+		-- IF ENABLED AND GROUP NEEDED
+		else
+			CA_debug_from(callerFunctionName,"GROUP NEEDED",debugHeaderTextcolor)
+			local role1,role2,role3 = UnitGroupRolesAssigned('player')
+			if role1 or role2 or role3 then 
+				if VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["mouseOnly"] then 
+					CA_debug_from(callerFunctionName,"MOUSEOVER NEEDED",debugHeaderTextcolor)
+					if tMouseOverUnit then 
+						-- SHOW
+						CA_debug_from(callerFunctionName,"SHOWING ICON",debugHeaderTextcolor)
+						tIcon:Show()
+						
+					else
+						-- NO MOUSEOVER
+						CA_debug_from(callerFunctionName,"HIDING ICON : NO MOUSEOVER",debugHeaderTextcolor)
+						tIcon:Hide()
+					end
+				else
+				end
+			else					-- HIDE
+				CA_debug_from(callerFunctionName,"HIDING ICON : NO GROUP",debugHeaderTextcolor)
+					tIcon:Hide()
+			end
+		end
+	else
+		tIcon:Hide()
+	end
+end
+

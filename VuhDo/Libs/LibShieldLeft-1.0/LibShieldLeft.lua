@@ -8,7 +8,14 @@ local playerName = UnitName('player')
 local playerGUID = UnitGUID('player')
 local playerClass = select(2, UnitClass('player'))
 local isShielder = (playerClass == "PRIEST")
-
+local function SafeGetSpellInfo(id)
+    local result = GetSpellInfo(id)
+    if result then 
+        return result
+    else
+        return ""
+    end
+end
 -----------------
 -- Event Frame --
 -----------------
@@ -59,16 +66,18 @@ local SpellCache = {}
 local bubHamID = 64413 -- since have no "i have to compensate for something"-legendary bubble hammer ;)
 -- bubHamID = 47930       -- I use grace as "proc" aura for testing purposes instead...
 
+
+
 local Shields = {
     --Protection of Ancient Kings
-    [GetSpellInfo(bubHamID)] = {
-        name = GetSpellInfo(bubHamID),
+    [SafeGetSpellInfo(bubHamID)] = {
+        name = SafeGetSpellInfo(bubHamID),
         duration = 8,
         order = 8,
     },
     --Power World: Shield
-    [GetSpellInfo(17)] = {
-        name = GetSpellInfo(17),
+    [SafeGetSpellInfo(17)] = {
+        name = SafeGetSpellInfo(17),
         duration = 30,
         order = 30,
         minAmount = {
@@ -78,14 +87,14 @@ local Shields = {
         },
     },
     --Divine Aegis
-    [GetSpellInfo(47753)] = {
-        name = GetSpellInfo(47753),
+    [SafeGetSpellInfo(47753)] = {
+        name = SafeGetSpellInfo(47753),
         duration = 12,
         order = 12,
     },
     --Ice Barrier
-    [GetSpellInfo(13031)] = {
-        name = GetSpellInfo(13031),
+    [SafeGetSpellInfo(13031)] = {
+        name = SafeGetSpellInfo(13031),
         duration = 60,
         order = 100,
         minAmount = {
@@ -95,8 +104,8 @@ local Shields = {
         },
     },
     --Mana Shield
-    [GetSpellInfo(10193)] = {
-        name = GetSpellInfo(10193),
+    [SafeGetSpellInfo(10193)] = {
+        name = SafeGetSpellInfo(10193),
         duration = 60,
         order = 150,
         minAmount = {
@@ -106,8 +115,8 @@ local Shields = {
         }
     },
     --Fire Ward
-    [GetSpellInfo(43010)] = {
-        name = GetSpellInfo(43010),
+    [SafeGetSpellInfo(43010)] = {
+        name = SafeGetSpellInfo(43010),
         duration = 30,
         order = 0,
         school = 0x04, --fire
@@ -117,8 +126,8 @@ local Shields = {
         }
     },
     --Frost Ward
-    [GetSpellInfo(6143)] = {
-        name = GetSpellInfo(6143),
+    [SafeGetSpellInfo(6143)] = {
+        name = SafeGetSpellInfo(6143),
         duration = 30,
         order = 0,
         school = 0x10, --frost
@@ -128,8 +137,8 @@ local Shields = {
         }
     },
     --Hand of protection
-    [GetSpellInfo(1022)] = {
-        name = GetSpellInfo(1022),
+    [SafeGetSpellInfo(5599)] = {
+        name = SafeGetSpellInfo(5599),
         duration = 8,
         order = 0,
         school = 0x01, --physical
@@ -137,21 +146,21 @@ local Shields = {
 
     --Fell blossom 28527
     [28527] = {
-        name = GetSpellInfo(28527),
+        name = SafeGetSpellInfo(28527),
         duration = 15,
         order = 15,
         minAmount = 750,
     },
     --Sonic Shield 55019
     [55019] = {
-        name = GetSpellInfo(55019),
+        name = SafeGetSpellInfo(55019),
         duration = 15,
         order = 15,
         minAmount = 750,
     },
     --Sacrifice 27273
-    [GetSpellInfo(27273)] = {
-        name = GetSpellInfo(27273),
+    [SafeGetSpellInfo(27273)] = {
+        name = SafeGetSpellInfo(27273),
         duration = 30,
         order = 30,
         minAmount = {
@@ -162,21 +171,21 @@ local Shields = {
     },
     --Lesser ward of shielding 29674
     [29674] = {
-        name = GetSpellInfo(29674),
+        name = SafeGetSpellInfo(29674),
         duration = 99999,
         order = 60,
         minAmount = 1000,
     },
     --Greater ward of shielding 29719
     [29719] = {
-        name = GetSpellInfo(29719),
+        name = SafeGetSpellInfo(29719),
         duration = 99999,
         order = 60,
         minAmount = 4000,
     },
     --Major Holy Protection Potion 28538
     [28538] = {
-        name = GetSpellInfo(28538),
+        name = SafeGetSpellInfo(28538),
         duration = 120,
         order = 0,
         school = 0x02,
@@ -184,7 +193,7 @@ local Shields = {
     },
     --Major Shadow Protection Potion 28537
     [28537] = {
-        name = GetSpellInfo(28537),
+        name = SafeGetSpellInfo(28537),
         id = 28537,
         duration = 120,
         order = 0,
@@ -193,7 +202,7 @@ local Shields = {
     },
     --Major Arcane Protection Potion 28536
     [28536] = {
-        name = GetSpellInfo(28536),
+        name = SafeGetSpellInfo(28536),
         duration = 120,
         order = 0,
         school = 0x40,
@@ -201,7 +210,7 @@ local Shields = {
     },
     --Major Frost Protection Potion 28512
     [28512] = {
-        name = GetSpellInfo(28512),
+        name = SafeGetSpellInfo(28512),
         duration = 120,
         order = 0,
         school = 0x10,
@@ -209,7 +218,7 @@ local Shields = {
     },
     --Major Nature Protection Potion 28513
     [28513] = {
-        name = GetSpellInfo(28513),
+        name = SafeGetSpellInfo(28513),
         duration = 120,
         order = 0,
         school = 0x08,
@@ -217,7 +226,7 @@ local Shields = {
     },
     --Major Fire Protection Potion 28511
     [28511] = {
-        name = GetSpellInfo(28511),
+        name = SafeGetSpellInfo(28511),
         duration = 120,
         order = 0,
         school = 0x04,
@@ -226,7 +235,7 @@ local Shields = {
 
     --Mighty Shadow Protection Potion 53915
     [53915] = {
-        name = GetSpellInfo(53915),
+        name = SafeGetSpellInfo(53915),
         id = 53915,
         duration = 120,
         order = 0,
@@ -235,7 +244,7 @@ local Shields = {
     },
     --Mighty Arcane Protection Potion 53910
     [53910] = {
-        name = GetSpellInfo(53910),
+        name = SafeGetSpellInfo(53910),
         duration = 120,
         order = 0,
         school = 0x40,
@@ -243,7 +252,7 @@ local Shields = {
     },
     --Mighty Frost Protection Potion 53913
     [53913] = {
-        name = GetSpellInfo(53913),
+        name = SafeGetSpellInfo(53913),
         duration = 120,
         order = 0,
         school = 0x10,
@@ -251,7 +260,7 @@ local Shields = {
     },
     --Mighty Nature Protection Potion 53914
     [53914] = {
-        name = GetSpellInfo(53914),
+        name = SafeGetSpellInfo(53914),
         duration = 120,
         order = 0,
         school = 0x08,
@@ -259,7 +268,7 @@ local Shields = {
     },
     --Mighty Fire Protection Potion 53911
     [53911] = {
-        name = GetSpellInfo(53911),
+        name = SafeGetSpellInfo(53911),
         duration = 120,
         order = 0,
         school = 0x04,
@@ -267,8 +276,8 @@ local Shields = {
     },
 
     --Darkmoon Card: Illusion 57350
-    [GetSpellInfo(57350)] = {
-        name = GetSpellInfo(57350),
+    [SafeGetSpellInfo(57350)] = {
+        name = SafeGetSpellInfo(57350),
         duration = 6,
         order = 6,
         minAmount = 400,
@@ -277,14 +286,14 @@ local Shields = {
     --Sacred Shield
     [58597] = {
         id = 58597,
-        name = GetSpellInfo(58597),
+        name = SafeGetSpellInfo(58597),
         duration = 6,
         order = 6,
         minAmount = 500,
     },
     --Shadow ward 6229
-    [GetSpellInfo(6229)] = {
-        name = GetSpellInfo(6229),
+    [SafeGetSpellInfo(6229)] = {
+        name = SafeGetSpellInfo(6229),
         duration = 30,
         order = 0,
         school = 0x20,
@@ -295,8 +304,8 @@ local Shields = {
         },
     },
     --Hardened Skin 71586
-    [GetSpellInfo(71586)] = {
-        name = GetSpellInfo(71586),
+    [SafeGetSpellInfo(71586)] = {
+        name = SafeGetSpellInfo(71586),
         duration = 10,
         order = 10,
         minAmount = 6400,
@@ -304,21 +313,21 @@ local Shields = {
 
 --[[
     --Astral shift 52179
-    [GetSpellInfo(52179)] = {
-        name = GetSpellInfo(52179),
+    [SafeGetSpellInfo(52179)] = {
+        name = SafeGetSpellInfo(52179),
         order = 1,
         percentAbsorbed = 0.3,
     },
     --Anti-magic shell 48707
-    [GetSpellInfo(48707)] = {
-        name = GetSpellInfo(48707),
+    [SafeGetSpellInfo(48707)] = {
+        name = SafeGetSpellInfo(48707),
         order = 2,
         duration = 5,
         percentAbsorbed = 0.75,
     },
     --Anti-magic zone 51052
-    [GetSpellInfo(51052)] = {
-        name = GetSpellInfo(51052),
+    [SafeGetSpellInfo(51052)] = {
+        name = SafeGetSpellInfo(51052),
         order = 2,
         percentAbsorbed = 0.75,
     },
@@ -505,9 +514,9 @@ local ClassSpecific = nil
 if (playerClass == "PRIEST") then
     ClassSpecific = {}
 
-    local PWShield = GetSpellInfo(17)
-    local DivineAegis = GetSpellInfo(47753)
-    local HammerBubble = GetSpellInfo(bubHamID)
+    local PWShield = SafeGetSpellInfo(17)
+    local DivineAegis = SafeGetSpellInfo(47753)
+    local HammerBubble = SafeGetSpellInfo(bubHamID)
     local NoDAHeal = {
     }
 

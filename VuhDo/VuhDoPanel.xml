@@ -290,6 +290,14 @@
                   </StatusBar>
 
                   <StatusBar name="$parentHiBar" setAllPoints="true" hidden="true" inherits="VuhDoStatusBar">
+                  <Layers>
+                    <Layer level="OVERLAY">
+                      -- RDF Role Icon
+                      <Texture name="$parentIc52" hidden="true" level= "OVERLAY" file="Interface\LFGFrame\UI-LFG-ICON-ROLES">
+                      </Texture>
+                    </Layer>
+        				</Layers>
+
                   </StatusBar>
 
                   <StatusBar name="$parentHotBar1" setAllPoints="true" hidden="false" inherits="VuhDoStatusBar">
@@ -389,13 +397,13 @@
               			-- Ready check
                     <Texture name="$parentIc20" hidden="true">
                     </Texture>
-
 										-- Raid Icon
                     <Texture name="$parentIc50" hidden="true" file="interface\targetingframe\ui-raidtargetingicons">
                     </Texture>
 										-- Swiftmend indicator
                     <Texture name="$parentIc51" hidden="true" file="Interface\AddOns\VuhDo\Images\icon_red">
                     </Texture>
+   
                   </Layer>
         				</Layers>
               </StatusBar>

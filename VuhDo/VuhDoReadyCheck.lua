@@ -116,6 +116,7 @@ end
 function VUHDO_readyStartCheck(aName, aDuration)
 	if (VUHDO_RAID_NAMES[aName] ~= nil) then
 		VUHDO_readyCheckConfirm(VUHDO_RAID_NAMES[aName], true); -- Originator is always ready
+		Timer.After(30, VUHDO_readyCheckEnds)
 	end
 end
 
