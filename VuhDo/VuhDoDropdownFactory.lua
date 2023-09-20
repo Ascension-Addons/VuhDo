@@ -30,6 +30,10 @@ end
 function VUHDO_roleOverrideSelected(_, aModelId, aName)
 	VUHDO_MANUAL_ROLES[aName] = aModelId;
 	VUHDO_reloadUI();
+	for tPanelNum = 1, 10 do -- VUHDO_MAX_PANELS
+		tPanel = VUHDO_getActionPanel(tPanelNum)
+		VUHDO_showAllPlayerIcons(tPanel);
+	end
 end
 
 

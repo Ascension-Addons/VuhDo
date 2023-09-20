@@ -392,17 +392,21 @@ end
 --
 local tUnit;
 local tEmptyRaid = { };
+
 function VUHDO_OnEvent(anInstance, anEvent, anArg1, anArg2, anArg3, anArg4, _, anArg6, _, _, anArg9, anArg10, _, anArg12)
 
---	if (VUHDO_EVENT_TIMES["all"] == nil) then
---		VUHDO_EVENT_TIMES["all"] = 0;
---	end
---	if (VUHDO_EVENT_TIMES[anEvent] == nil) then
---		VUHDO_EVENT_TIMES[anEvent] = { 0, 0, 0, 0, 0, 0 };
---	end
---	local tDuration = GetTime();
 
 	VUHDO_EVENT_COUNT = VUHDO_EVENT_COUNT + 1;
+
+
+	if (VUHDO_VARIABLES_LOADED) then
+
+		
+	end
+
+
+
+
 
 	if ("COMBAT_LOG_EVENT_UNFILTERED" == anEvent) then
 		if (VUHDO_VARIABLES_LOADED) then
@@ -412,6 +416,7 @@ function VUHDO_OnEvent(anInstance, anEvent, anArg1, anArg2, anArg3, anArg4, _, a
 		if ((VUHDO_RAID or tEmptyRaid)[anArg1] ~= nil) then
 			VUHDO_updateHealth(anArg1, 4); -- VUHDO_UPDATE_DEBUFF
 		end
+		
 	elseif ("UNIT_HEALTH" == anEvent) then
 		if ((VUHDO_RAID or tEmptyRaid)[anArg1] ~= nil) then
 			VUHDO_updateHealth(anArg1, 2); -- VUHDO_UPDATE_HEALTH
@@ -511,7 +516,12 @@ function VUHDO_OnEvent(anInstance, anEvent, anArg1, anArg2, anArg3, anArg4, _, a
 		VUHDO_registerAllBouquets();
 		VUHDO_initBuffs();
 		VUHDO_initDebuffs();
-
+	elseif ("SPELLS_CHANGED" == anEvent) and not InCombatLockdown() then
+		VUHDO_initFromSpellbook();
+		VUHDO_registerAllBouquets();
+		VUHDO_initBuffs();
+		VUHDO_initDebuffs();
+		
 	elseif ("VARIABLES_LOADED" == anEvent) then
 		VUHDO_init();
 
@@ -741,6 +751,8 @@ function VUHDO_slashCmd(aCommand)
 		for _, tCurLine in ipairs(tLines) do
 			VUHDO_MsgC(tCurLine);
 		end
+	elseif aCommand == "debug" then
+		VUHDO_toggleDebug()
 	else
 		-- if (VuhDoNewOptionsTabbedFrame ~= nil) then
 		-- 	if (InCombatLockdown() and not VuhDoNewOptionsTabbedFrame:IsShown()) then
@@ -1385,7 +1397,7 @@ function VUHDO_OnUpdate(anInstance, aTimeDelta)
 			VUHDO_TIMERS["REFRESH_TARGETS"] = 0.51;
 		end
 	end
-
+	-- VUHDO_updateRDF_ICONS_Throttled()
 	-----------------------------------------------------------------------------------------
 
 	if (VUHDO_CONFIG_SHOW_RAID) then
@@ -1443,5 +1455,5 @@ function VUHDO_OnUpdate(anInstance, aTimeDelta)
 			end
 		end
 	end
-
+	
 end

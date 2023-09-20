@@ -116,6 +116,20 @@
 			      	</OnLoad>
       			</Scripts>
           </CheckButton>
+			<CheckButton name="$parentEnableDebuffs" text="Enable" inherits="VuhDoCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="12" y="-31" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						VUHDO_lnfSetModel(self, "VUHDO_CONFIG.DETECT_DEBUFFS_ENABLED");
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
 
           <Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
             <Size>

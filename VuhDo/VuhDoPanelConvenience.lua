@@ -18,7 +18,9 @@ local VUHDO_BAR_ICON_NAMES = { };
 VUHDO_BUTTON_CACHE = { };
 local VUHDO_BUTTON_CACHE = VUHDO_BUTTON_CACHE;
 
-
+function VUHDO_getBarRDFRoleIcon(aButton)
+	return VUHDO_GLOBAL[aButton:GetName() .. "BgBarIcBarHlBarHiBarIc52"];
+end
 
 --
 function VUHDO_getBarRoleIcon(aButton, anIconNumber)

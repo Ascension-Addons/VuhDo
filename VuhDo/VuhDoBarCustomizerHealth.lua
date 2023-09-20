@@ -682,6 +682,19 @@ function VUHDO_customizeHealButton(aButton)
   		VUHDO_getBarRoleIcon(aButton, 50):Hide();
   	end
 	end
+	-- RDF icon
+
+
+	if strfind(aButton:GetName(), "VdAc1", 1, true) and VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["show"] then
+		tIcon = VUHDO_getBarRDFRoleIcon(aButton);
+		
+		if (tIcon ~= nil and tUnit ~= nil ) then
+			PlaceRDFIcon(aButton,tIcon,"CustomizerHealth")
+		end
+	
+	else
+		
+	end
 end
 local VUHDO_customizeHealButton = VUHDO_customizeHealButton;
 

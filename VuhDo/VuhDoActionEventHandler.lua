@@ -32,6 +32,50 @@ local VUHDO_getUnitButtons;
 local VUHDO_CONFIG;
 local VUHDO_INTERNAL_TOGGLES;
 local VUHDO_RAID;
+
+
+
+
+local throttle_seconds = 1
+local RDF_ICON_AutoHideDelay = 3
+local RDF_ICONUpdate_Timer_IsRunning = false
+local mouseover_OnLeave_Timer_IsRunning = false
+local RDF_ICONAutoHideDelay_Timer_IsRunning = false
+
+
+-- local RDF_ICONUpdate_Timer;
+
+
+-- local RDF_ICONUpdate_Lock = false
+local mouseover_OnEnter_Lock = false
+
+
+-- local mouseover_OnEnter_LockTimer
+-- local mouseover_OnLeave_UnlockTimer
+
+local function RDF_ICONUpdateTimer_Start()
+	if RDF_ICONUpdate_Timer_IsRunning then return end
+	RDF_ICONUpdate_Timer_IsRunning = true
+	Timer.NewTimer(throttle_seconds,function() RDF_ICONUpdate_Timer_IsRunning = false end)
+end
+local function RDF_ICONAutoHideDelay_Timer_Start()
+	if RDF_ICONAutoHideDelay_Timer_IsRunning then return end
+	RDF_ICONAutoHideDelay_Timer_IsRunning = true
+	Timer.After(3,function() RDF_ICONAutoHideDelay_Timer_IsRunning = false end)
+end
+
+local function mouseover_OnLeave_Timer_Start()
+	if mouseover_OnLeave_Timer_IsRunning then return end
+	mouseover_OnLeave_Timer_IsRunning = true
+	Timer.NewTimer(1,function() mouseover_OnLeave_Timer_IsRunning = false end)
+	RDF_ICONAutoHideDelay_Timer_Start()
+end
+
+local function mouseover_OnEnter_Timer_Start()
+	mouseover_OnEnter_Lock = true
+	mouseover_OnEnter_LockTimer = Timer.NewTimer(1,function() mouseover_OnEnter_Lock = false end)
+end
+
 function VUHDO_actionEventHandlerInitBurst()
 	VUHDO_updateBouquetsForEvent = VUHDO_GLOBAL["VUHDO_updateBouquetsForEvent"];
 	VUHDO_highlightClusterFor = VUHDO_GLOBAL["VUHDO_highlightClusterFor"];
@@ -62,160 +106,307 @@ end
 
 
 --
-local function VUHDO_placePlayerIcon(aButton, anIcon, anIndex)
-	anIcon:ClearAllPoints();
-	if (anIndex == 2) then
-		anIcon:SetPoint("CENTER", aButton:GetName(), "TOPRIGHT", -5, -10);
-	else
-		if (anIndex > 2) then
-			anIndex = anIndex - 1;
-		end
-		local tCol = floor(anIndex * 0.5);
-		local tRow = anIndex - tCol * 2;
-		anIcon:SetPoint("TOPLEFT", aButton:GetName(), "TOPLEFT", tCol * 14, -tRow * 14);
-	end
+-- function VUHDO_placePlayerIcon(aButton, anIcon, anIndex)
+-- 	anIcon:ClearAllPoints();
+-- 	if (anIndex == 2) then
+-- 		anIcon:SetPoint("CENTER", aButton:GetName(), "TOPRIGHT", -5, -10);
+-- 	elseif (anIndex == 99) then
+-- 		anIcon:SetPoint("CENTER", aButton:GetName(), "TOP", 0, 0);
+-- 	else
+-- 		if (anIndex > 2) then
+-- 			anIndex = anIndex - 1;
+-- 		end
+-- 		local tCol = floor(anIndex * 0.5);
+-- 		local tRow = anIndex - tCol * 2;
+-- 		anIcon:SetPoint("TOPLEFT", aButton:GetName(), "TOPLEFT", tCol * 14, -tRow * 14);
+-- 	end
+-- 	anIcon:SetAlpha(1);
+-- 	anIcon:SetVertexColor(1, 1, 1);
+-- 	anIcon:Show();
+-- end
+-- function VUHDO_placeRDF_ICON(aButton,anIcon)
+-- 	-- anIcon:ClearAllPoints();
+-- 	-- anIcon:SetPoint("CENTER", aButton:GetName(), "TOP", 0, 0);
+-- 	-- anIcon:SetAlpha(1);
+-- 	-- anIcon:SetVertexColor(1, 1, 1);
+-- 	anIcon:Show();
+-- end
 
-	anIcon:SetWidth(16);
-	anIcon:SetHeight(16);
-	anIcon:SetAlpha(1);
-	anIcon:SetVertexColor(1, 1, 1);
-	anIcon:Show();
-end
 
+-- local function VUHDO_show_RDF_Icon(aButton)
+-- 	local tRole = VUHDO_determineRole(aButton['raidid'])
+-- 	if (tRole ~= nil) then
+-- 		tIcon = VUHDO_getBarRDFRoleIcon(aButton);
+-- 		if (VUHDO_ID_MELEE_TANK == tRole) then
+-- 			tIcon:SetTexCoord(GetTexCoordsForRole("TANK"));
+-- 		elseif (VUHDO_ID_RANGED_HEAL == tRole) then
+-- 			tIcon:SetTexCoord(GetTexCoordsForRole("HEALER"));
+-- 		else
+-- 			tIcon:SetTexCoord(GetTexCoordsForRole("DAMAGER"));
+-- 		end
+-- 		tIcon:SetWidth(25);
+-- 		tIcon:SetHeight(25);
+-- 		VUHDO_placePlayerIcon(aButton, tIcon, 99);
+-- 	else
 
-
+-- 	end
+-- end
+-- local function VUHDO_hide_RDF_Icon(aButton)
+-- 	if (aButton['raidid'] ~= nil) then
+-- 		tIcon = VUHDO_getBarRDFRoleIcon(aButton);
+-- 		tIcon:Hide()
+-- 	end
+-- end
 --
-local function VUHDO_showPlayerIcons(aButton)
-	local tUnit = VUHDO_resolveButtonUnit(aButton);
-	local tIsLeader = false;
-	local tIsAssist = false;
-	local tIsMasterLooter = false;
-	local tIsPvPEnabled;
-	local tFaction;
+-- local function VUHDO_showPlayerIcons(aButton)
+	-- local tUnit = VUHDO_resolveButtonUnit(aButton);
+	-- local tIsLeader = false;
+	-- local tIsAssist = false;
+	-- local tIsMasterLooter = false;
+	-- local tIsPvPEnabled;
+	-- local tFaction;
 
-	if (tUnit == nil) then
-		return;
-	end
+	-- if (tUnit == nil) then
+	-- 	return;
+	-- end
 
-	if (UnitInRaid(tUnit)) then
-		local tUnitNo = VUHDO_getUnitNo(tUnit);
-		if (tUnitNo ~= nil) then
-			local tRank;
-			_, tRank, _, _, _, _, _, _, _, _, tIsMasterLooter = GetRaidRosterInfo(tUnitNo);
-			if (tRank == 2) then
-				tIsLeader = true;
-			elseif (tRank == 1) then
-				tIsAssist = true;
-			end
-		end
-	else
-		tIsLeader = UnitIsPartyLeader(tUnit);
-	end
+	-- if (UnitInRaid(tUnit)) then
+	-- 	local tUnitNo = VUHDO_getUnitNo(tUnit);
+	-- 	if (tUnitNo ~= nil) then
+	-- 		local tRank;
+	-- 		_, tRank, _, _, _, _, _, _, _, _, tIsMasterLooter = GetRaidRosterInfo(tUnitNo);
+	-- 		if (tRank == 2) then
+	-- 			tIsLeader = true;
+	-- 		elseif (tRank == 1) then
+	-- 			tIsAssist = true;
+	-- 		end
+	-- 	end
+	-- else
+	-- 	tIsLeader = UnitIsPartyLeader(tUnit);
+	-- end
 
-	tIsPvPEnabled = UnitIsPVP(tUnit);
+	-- tIsPvPEnabled = UnitIsPVP(tUnit);
 
-	local tIcon;
-	if (tIsLeader) then
-		tIcon = VUHDO_getBarIcon(aButton, 1);
-		tIcon:SetTexture("Interface\\groupframe\\ui-group-leadericon");
-		VUHDO_placePlayerIcon(aButton, tIcon, 0);
-	elseif (tIsAssist) then
-		tIcon = VUHDO_getBarIcon(aButton, 1);
-		tIcon:SetTexture("Interface\\groupframe\\ui-group-assistanticon");
-		VUHDO_placePlayerIcon(aButton, tIcon, 0);
-	end
+	-- local tIcon;
+	-- if (tIsLeader) then
+	-- 	tIcon = VUHDO_getBarIcon(aButton, 1);
+	-- 	tIcon:SetTexture("Interface\\groupframe\\ui-group-leadericon");
+	-- 	VUHDO_placePlayerIcon(aButton, tIcon, 0);
+	-- elseif (tIsAssist) then
+	-- 	tIcon = VUHDO_getBarIcon(aButton, 1);
+	-- 	tIcon:SetTexture("Interface\\groupframe\\ui-group-assistanticon");
+	-- 	VUHDO_placePlayerIcon(aButton, tIcon, 0);
+	-- end
 
-	if (tIsMasterLooter) then
-		tIcon = VUHDO_getBarIcon(aButton, 2);
-		tIcon:SetTexture("Interface\\groupframe\\ui-group-masterlooter");
-		VUHDO_placePlayerIcon(aButton, tIcon, 1);
-	end
+	-- if (tIsMasterLooter) then
+	-- 	tIcon = VUHDO_getBarIcon(aButton, 2);
+	-- 	tIcon:SetTexture("Interface\\groupframe\\ui-group-masterlooter");
+	-- 	VUHDO_placePlayerIcon(aButton, tIcon, 1);
+	-- end
 
-	if (tIsPvPEnabled) then
-		tIcon = VUHDO_getBarIcon(aButton, 3);
+	-- if (tIsPvPEnabled) then
+	-- 	tIcon = VUHDO_getBarIcon(aButton, 3);
 
-		tFaction, _ = UnitFactionGroup(tUnit);
-		if ("Alliance" == tFaction) then
-			tIcon:SetTexture("Interface\\groupframe\\ui-group-pvp-alliance");
-		else
-			tIcon:SetTexture("Interface\\groupframe\\ui-group-pvp-horde");
-		end
+	-- 	tFaction, _ = UnitFactionGroup(tUnit);
+	-- 	if ("Alliance" == tFaction) then
+	-- 		tIcon:SetTexture("Interface\\groupframe\\ui-group-pvp-alliance");
+	-- 	else
+	-- 		tIcon:SetTexture("Interface\\groupframe\\ui-group-pvp-horde");
+	-- 	end
 
-		VUHDO_placePlayerIcon(aButton, tIcon, 2);
-		tIcon:SetWidth(32);
-		tIcon:SetHeight(32);
-	end
+	-- 	VUHDO_placePlayerIcon(aButton, tIcon, 2);
+	-- 	tIcon:SetWidth(32);
+	-- 	tIcon:SetHeight(32);
+	-- end
 
-	local tClass = (VUHDO_RAID[tUnit] or {})["class"];
-	if (tClass ~= nil) then
-		tIcon = VUHDO_getBarIcon(aButton, 4);
+	-- local tClass = (VUHDO_RAID[tUnit] or {})["class"];
+	-- if (tClass ~= nil) then
+	-- 	tIcon = VUHDO_getBarIcon(aButton, 4);
 
-		tIcon:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles");
-		tIcon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[tClass]));
-		VUHDO_placePlayerIcon(aButton, tIcon, 3);
-	end
+	-- 	tIcon:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles");
+	-- 	tIcon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[tClass]));
+	-- 	VUHDO_placePlayerIcon(aButton, tIcon, 3);
+	-- end
 
-	local tRole = (VUHDO_RAID[tUnit] or {})["role"];
-	if (tRole ~= nil) then
-		tIcon = VUHDO_getBarIcon(aButton, 5);
-		tIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICON-ROLES");
-		if (VUHDO_ID_MELEE_TANK == tRole) then
-			tIcon:SetTexCoord(GetTexCoordsForRole("TANK"));
-		elseif (VUHDO_ID_RANGED_HEAL == tRole) then
-			tIcon:SetTexCoord(GetTexCoordsForRole("HEALER"));
-		else
-			tIcon:SetTexCoord(GetTexCoordsForRole("DAMAGER"));
-		end
-		VUHDO_placePlayerIcon(aButton, tIcon, 5);
-	end
-
-	local tBar = VUHDO_getHealthBar(aButton, 1);
-	VUHDO_getBarText(tBar):SetAlpha(0.5);
-	VUHDO_getLifeText(tBar):SetAlpha(0.5);
-end
+	-- local tRole = VUHDO_determineRole(aButton['raidid'])
+	-- if (tRole ~= nil) then
+	-- 	tIcon = VUHDO_getBarRDFRoleIcon(aButton);
+	-- 	if (VUHDO_ID_MELEE_TANK == tRole) then
+	-- 		tIcon:SetTexCoord(GetTexCoordsForRole("TANK"));
+	-- 	elseif (VUHDO_ID_RANGED_HEAL == tRole) then
+	-- 		tIcon:SetTexCoord(GetTexCoordsForRole("HEALER"));
+	-- 	else
+	-- 		tIcon:SetTexCoord(GetTexCoordsForRole("DAMAGER"));
+	-- 	end
+	-- 	tIcon:SetWidth(25);
+	-- 	tIcon:SetHeight(25);
+	-- 	VUHDO_placePlayerIcon(aButton, tIcon, 99);
+	-- else
+	-- 	--print("DEBUG","NO ROLE")
+	-- end
+-- end
 
 
 
 --
 function VUHDO_hideAllPlayerIcons()
-	local tPanelNum;
-	local tAllButtons;
-	local tPanel;
-	local tButton;
+	-- print("DEBUG","SHOULD HIDE RDF ROLES")
+	-- local tPanelNum;
+	-- local tAllButtons;
+	-- local tPanel;
+	-- local tButton;
 
-	for tPanelNum = 1, 10 do -- VUHDO_MAX_PANELS
-		tPanel = VUHDO_getActionPanel(tPanelNum);
-		local tAllButtons = { tPanel:GetChildren() };
-		VUHDO_initLocalVars(tPanelNum);
+	-- for tPanelNum = 1, 10 do -- VUHDO_MAX_PANELS
+	-- 	tPanel = VUHDO_getActionPanel(tPanelNum);
+	-- 	local tAllButtons = { tPanel:GetChildren() };
+	-- 	VUHDO_initLocalVars(tPanelNum);
 
-		for _, tButton in pairs(tAllButtons) do
-			if (strfind(tButton:GetName(), "HlU", 1, true) and tButton:IsShown()) then
-				VUHDO_initButtonStatics(tButton, tPanelNum);
-				VUHDO_initAllHotIcons();
-			end
+	-- 	for _, tButton in pairs(tAllButtons) do
+	-- 		if (strfind(tButton:GetName(), "HlU", 1, true) and tButton:IsShown()) then
+	-- 			VUHDO_initButtonStatics(tButton, tPanelNum);
+	-- 			VUHDO_initAllHotIcons();
+	-- 		end
+	-- 	end
+	-- end
+
+	-- VUHDO_removeAllHots();
+	-- VUHDO_suspendHoTs(false);
+	-- VUHDO_reloadUI();
+end
+
+-- function VUHDO_showRDF_ICONS(aPanel)
+-- 	local tAllButtons = { aPanel:GetChildren() };
+-- 	for _, tButton in pairs(tAllButtons) do
+-- 		if (strfind(tButton:GetName(), "HlU", 1, true) and tButton:IsShown()) then
+
+
+-- 			if (VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[tButton]]["RDF_ICON"]["show"]) then
+-- 				VUHDO_show_RDF_Icon(tButton);
+-- 			end
+			
+-- 		end
+-- 	end
+-- 	VUHDO_reloadUI();
+-- end
+
+-- function VUHDO_hideRDF_ICONS(aPanel)
+-- 	CA_debug_from("ActionEventHandler","Hiding RDF Icon")
+-- 	local tAllButtons = { aPanel:GetChildren() };
+-- 	for _, tButton in pairs(tAllButtons) do
+-- 		if (strfind(tButton:GetName(), "HlU", 1, true) and tButton:IsShown()) then
+-- 			if not mouseover_OnLeave_Timer_IsRunning then 
+-- VUHDO_hide_RDF_Icon(tButton);
+-- end	
+-- 		end
+-- 	end
+-- 	VUHDO_reloadUI();
+-- end
+
+-- VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE["VdAc1HIU1"]]["RDF_ICON"]["show"]
+
+
+function VUHDO_updateRDF_ICONS(throttled)
+	if not throttled then 
+		CA_debug_from("ActionEventHandler","Ignoring Lock to refresh Immediately","3d85c6")
+	else 
+
+		if RDF_ICONUpdate_Timer_IsRunning and throttled then 
+			return 
 		end
+		
+		RDF_ICONUpdateTimer_Start()
+	end
+	local role1,role2,role3 = UnitGroupRolesAssigned('player')
+	local tMouseOverUnit = VUHDO_getCurrentMouseOver();
+
+	if tMouseOverUnit then 
+		CA_debug_from("ActionEventHandler","Mouseover: "..tMouseOverUnit,"3d85c6")
+	else
+		
 	end
 
-	VUHDO_removeAllHots();
-	VUHDO_suspendHoTs(false);
-	VUHDO_reloadUI();
+
+	-- for aPanel = 1, 10 do
+		local tAllButtons = { VUHDO_getActionPanel(1):GetChildren() };
+		for _, aButton in pairs(tAllButtons) do
+			local tUnit = aButton['raidid']
+			if aButton and aButton:GetName() and strfind(aButton:GetName(), "VdAc1", 1, true) and VUHDO_BUTTON_CACHE[aButton] then
+				if VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["show"] then
+					tIcon = VUHDO_getBarRDFRoleIcon(aButton);
+					
+					if (tIcon ~= nil and tUnit ~= nil ) then
+						PlaceRDFIcon(aButton,tIcon,"ActionEventHandler","3d85c6")
+					else
+						CA_debug_from("ActionEventHandler","RDF icon is nil! Button name: "..aButton:GetName() ,"3d85c6")
+					end
+				end
+			else
+				
+			end
+		end
+	-- VUHDO_reloadUI();
+end
+
+function VUHDO_updateRDF_ICONS_Throttled()
+	VUHDO_updateRDF_ICONS(true)
+end
+
+function VUHDO_updateRDF_ICONS_Unthrottled()
+	VUHDO_updateRDF_ICONS(false)
 end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		-- if (VUHDO_ALWAYS_SHOW_RDF_ICONS or ( a or b or c )) then 
+		-- 	CA_debug_from("ActionEventHandler","Should only show when in RDF, or VUHDO_ALWAYS_SHOW_RDF_ICONS")
+
+		-- 	anythingToHide = true
+		-- else
+		-- 	if anythingToHide then 
+		-- 		CA_debug_from("ActionEventHandler","Should only show when not in RDF, or not VUHDO_ALWAYS_SHOW_RDF_ICONS")
+
+		-- 		for tPanelNum = 1, 10 do -- VUHDO_MAX_PANELS
+		-- 			tPanel = VUHDO_getActionPanel(tPanelNum)
+		-- 			VUHDO_hideRDF_ICONS(tPanel);
+		-- 		end
+		-- 		anythingToHide = false
+		-- 	end 
+
+
+		-- end
+
+
 --
-local function VUHDO_showAllPlayerIcons(aPanel)
-	VUHDO_suspendHoTs(true);
-	VUHDO_removeAllHots();
+function VUHDO_showAllPlayerIcons(aPanel)
+	-- print("DEBUG","SHOULD SHOW RDF ROLES")
+	-- VUHDO_suspendHoTs(true);
+	-- VUHDO_removeAllHots();
 
-	local tAllButtons = { aPanel:GetChildren() };
-	local tButton;
+	-- local tAllButtons = { aPanel:GetChildren() };
+	-- local tButton;
 
-	for _, tButton in pairs(tAllButtons) do
-		if (strfind(tButton:GetName(), "HlU", 1, true) and tButton:IsShown()) then
-			VUHDO_showPlayerIcons(tButton);
-		end
-	end
+	-- for _, tButton in pairs(tAllButtons) do
+	-- 	if (strfind(tButton:GetName(), "HlU", 1, true) and tButton:IsShown()) then
+	-- 		-- print("DEBUG","FOUND FRAME",tButton:GetName())
+	-- 		VUHDO_showPlayerIcons(tButton);
+	-- 	end
+	-- end
 end
 
 
@@ -269,6 +460,12 @@ function VuhDoActionOnEnter(aButton)
 			end
 		end
 	end
+	if VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["mouseOnly"] then 
+		if mouseover_OnEnter_Lock then return end
+		mouseover_OnEnter_Timer_Start()
+		VUHDO_updateRDF_ICONS_Unthrottled()
+		
+	end
 end
 
 
@@ -288,9 +485,9 @@ function VuhDoActionOnLeave(aButton)
 	end
 
 	if (VUHDO_INTERNAL_TOGGLES[18]) then -- VUHDO_UPDATE_MOUSEOVER_CLUSTER
-  	VUHDO_resetClusterUnit();
-  	VUHDO_removeAllClusterHighlights();
-  end
+		VUHDO_resetClusterUnit();
+		VUHDO_removeAllClusterHighlights();
+	end
 
 	if (VUHDO_INTERNAL_TOGGLES[20]) then -- VUHDO_UPDATE_MOUSEOVER_GROUP
 		tUnit = VUHDO_resolveButtonUnit(aButton);
@@ -306,6 +503,14 @@ function VuhDoActionOnLeave(aButton)
 			end
 		end
 	end
+	if VUHDO_PANEL_SETUP[VUHDO_BUTTON_CACHE[aButton]]["RDF_ICON"]["mouseOnly"] then 
+		if mouseover_OnLeave_Timer_IsRunning then return end
+		mouseover_OnLeave_Timer_Start()
+		Timer.After(2, VUHDO_updateRDF_ICONS_Unthrottled)
+	else
+		RDF_ICONUpdate_Lock = false
+	end
+
 end
 
 
@@ -416,6 +621,7 @@ end
 
 ---
 function VUHDO_startMoving(aPanel)
+	-- print("start moving", aPanel:GetName())
 	if (VuhDoNewOptionsPanelPanel ~= nil and VuhDoNewOptionsPanelPanel:IsVisible()) then
 		local tNewNum = VUHDO_getComponentPanelNum(aPanel);
 		if (tNewNum ~= DESIGN_MISC_PANEL_NUM) then
@@ -448,7 +654,7 @@ function VUHDO_stopMoving(aPanel)
 	aPanel["isMoving"] = false;
 	VUHDO_savePanelCoords(aPanel);
 	VUHDO_saveCurrentProfilePanelPosition(VUHDO_getPanelNum(aPanel));
-  VUHDO_hideAllPlayerIcons();
+	--VUHDO_hideAllPlayerIcons();
 end
 
 

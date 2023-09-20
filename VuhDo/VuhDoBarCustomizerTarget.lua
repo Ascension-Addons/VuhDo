@@ -163,7 +163,7 @@ end
 
 
 -- Wir merken uns die Target-Buttons, wenn das Ziel im Raid ist,
--- um Gesundheitsupdates mit dem regulären Mechanismus durchzuführen
+-- um Gesundheitsupdates mit dem regulï¿½ren Mechanismus durchzufï¿½hren
 -- die Target-Buttons sind also durch den Target-Namen indiziert.
 local tUnit, tInfo;
 local tName;
@@ -184,7 +184,7 @@ end
 
 
 
--- Lösche alle Target-Buttons der Person, deren Ziel sich geändert hat
+-- Lï¿½sche alle Target-Buttons der Person, deren Ziel sich geï¿½ndert hat
 -- Wobei die Buttons mit dem Namen des TARGETS indiziert sind, welchen
 -- wir uns VUHDO_IN_RAID_TARGETS aber gemerkt haben
 local tName;
