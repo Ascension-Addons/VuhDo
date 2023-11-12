@@ -2385,7 +2385,7 @@ end
 function HealComm:PLAYER_TALENT_UPDATE()
 	for k, v in pairs(talentData) do
 		if (talentData[k].id) then 
-			local rank, _,_,_,_,_  = CA_GetTalentInfo(talentData[k].id)
+			local rank = C_CharacterAdvancement.GetTalentRankByID(talentData[k].id)
 			if (rank and rank > 0) then 
 				talentData[k].current = talentData[k].mod * rank
 				talentData[k].spent = rank
