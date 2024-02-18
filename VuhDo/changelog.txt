@@ -1,3 +1,10 @@
+Vuhdo for Ascension version 3.2 - By Andrew
+
+Changes:
+-- Support CompactRaidFrames
+
+--------------------------------------------------------------
+
 Vuhdo for Ascension version 3.1.2 - By Szyler
 
 Bugfixes:

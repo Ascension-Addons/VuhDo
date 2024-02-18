@@ -227,7 +227,7 @@ end
 
 
 -- Liefert sicheren Fontnamen. Falls in LSM nicht (mehr) vorhanden oder
--- in asiatischem Land den Standard-Font zurückliefern. Genauso wenn als Argument nil geliefert wurde
+-- in asiatischem Land den Standard-Font zurï¿½ckliefern. Genauso wenn als Argument nil geliefert wurde
 local tFontInfo;
 function VUHDO_getFont(aFont)
 	if (strlen(aFont or "") > 0 and sIsNotInChina) then
@@ -450,6 +450,56 @@ local function VUHDO_showBlizzFocus()
 	VUHDO_showFocusFrame();
 end
 
+--
+local function VUHDO_hideBlizzRaid()
+	if CompactRaidFrameManager then
+		CompactRaidFrameManager.container:UnregisterAllEvents()
+		CompactRaidFrameManager.container:Hide()
+	end
+end
+
+--
+local function VUHDO_showBlizzRaid()
+	if CompactRaidFrameManager then
+		CompactRaidFrameManager.container:RegisterEvent("PARTY_MEMBERS_CHANGED")
+		CompactRaidFrameManager.container:RegisterEvent("RAID_ROSTER_UPDATE")
+		CompactRaidFrameManager.container:RegisterEvent("UNIT_PET")
+		if not InCombatLockdown() then
+			CompactRaidFrameManager.container:UpdateDisplayedUnits()
+			CompactRaidFrameManager.container:TryUpdate()
+		end
+	end
+end
+
+--
+local function VUHDO_hideBlizzRaidMgr()
+	if CompactRaidFrameManager then
+		CompactRaidFrameManager:UnregisterAllEvents()
+		CompactRaidFrameManager:Hide()
+	end
+end
+
+--
+local function VUHDO_showBlizzRaidMgr()
+	if CompactRaidFrameManager then
+		CompactRaidFrameManager:RegisterEvent("DISPLAY_SIZE_CHANGED")
+		CompactRaidFrameManager:RegisterEvent("UI_SCALE_CHANGED")
+		CompactRaidFrameManager:RegisterEvent("RAID_ROSTER_UPDATE")
+		CompactRaidFrameManager:RegisterEvent("PARTY_MEMBERS_CHANGED")
+		CompactRaidFrameManager:RegisterEvent("UPDATE_ACTIVE_BATTLEFIELD")
+		CompactRaidFrameManager:RegisterEvent("UNIT_FLAGS")
+		CompactRaidFrameManager:RegisterEvent("PLAYER_FLAGS_CHANGED")
+		CompactRaidFrameManager:RegisterEvent("PLAYER_ENTERING_WORLD")
+		CompactRaidFrameManager:RegisterEvent("PARTY_LEADER_CHANGED")
+		CompactRaidFrameManager:RegisterEvent("RAID_TARGET_UPDATE")
+		CompactRaidFrameManager:RegisterEvent("PLAYER_TARGET_CHANGED")
+		if not InCombatLockdown() then
+			CompactRaidFrameManager:UpdateShown()
+		end
+	end
+end
+
+
 
 
 
@@ -459,6 +509,14 @@ function VUHDO_initBlizzFrames()
 		VUHDO_hideBlizzParty();
 	else
 		VUHDO_showBlizzParty();
+	end
+
+	if (VUHDO_CONFIG["BLIZZ_UI_HIDE_RAID"]) then
+		VUHDO_hideBlizzRaid()
+		VUHDO_hideBlizzRaidMgr()
+	else
+		VUHDO_showBlizzRaid()
+		VUHDO_showBlizzRaidMgr()
 	end
 
 	if (VUHDO_CONFIG["BLIZZ_UI_HIDE_PLAYER"]) then
@@ -496,6 +554,13 @@ function VUHDO_initHideBlizzFrames()
 
 	if (VUHDO_CONFIG["BLIZZ_UI_HIDE_PARTY"]) then
 		VUHDO_hideBlizzParty();
+		VUHDO_hideBlizzRaid()
+		VUHDO_hideBlizzRaidMgr()
+	end
+
+	if (VUHDO_CONFIG["BLIZZ_UI_HIDE_RAID"]) then
+		VUHDO_hideBlizzRaid()
+		VUHDO_hideBlizzRaidMgr()
 	end
 
 	if (VUHDO_CONFIG["BLIZZ_UI_HIDE_PLAYER"]) then

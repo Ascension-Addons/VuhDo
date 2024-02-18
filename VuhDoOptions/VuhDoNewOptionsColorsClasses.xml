@@ -233,7 +233,7 @@
 			      	<OnLoad>
 			      		VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##30");
 			      		VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_HERO, VUHDO_I18N_HERO);
-					    	VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_498);
+					    	VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_499);
 			      	</OnLoad>
       			</Scripts>
           </Frame>

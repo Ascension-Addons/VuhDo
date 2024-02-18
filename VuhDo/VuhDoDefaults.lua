@@ -648,6 +648,7 @@ local VUHDO_DEFAULT_CONFIG = {
 	["OMIT_DFT_MTS"] = false,
 	["BLIZZ_UI_HIDE_PLAYER"] = false,
 	["BLIZZ_UI_HIDE_PARTY"] = false,
+	["BLIZZ_UI_HIDE_RAID"] = true,
 	["BLIZZ_UI_HIDE_TARGET"] = false,
 	["BLIZZ_UI_HIDE_PET"] = false,
 	["BLIZZ_UI_HIDE_FOCUS"] = false,
@@ -915,6 +916,12 @@ function VUHDO_loadDefaultConfig()
 			-- ICC
 			73912 -- Necrotic plague, Lich King
 		);
+	end
+
+	if (VUHDO_CONFIG["CUSTOM_DEBUFF"].version < 14) then
+		VUHDO_CONFIG["CUSTOM_DEBUFF"].version = 14;
+		VUHDO_CONFIG["BLIZZ_UI_HIDE_RAID"] = true
+		-- idk if this is right but whatever
 	end
 
 	local tName;

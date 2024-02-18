@@ -688,6 +688,7 @@ VUHDO_I18N_TT_494 = "Select destination profile";
 VUHDO_I18N_TT_495 = "Exports all custom debuffs of current profile to all profiles of this toon.";
 VUHDO_I18N_TT_496 = "Exports all custom debuffs of current profile to selected profile.";
 VUHDO_I18N_TT_497 = "Exports all custom debuffs of current profile to ALL other profiles.";
+VUHDO_I18N_TT_498 = "Check to hide standard Ascension Raid Frames."
 
 VUHDO_I18N_APPLY_TO_ALL = "применить все";
 VUHDO_I18N_TEST = "Тест";

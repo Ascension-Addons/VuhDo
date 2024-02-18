@@ -689,6 +689,7 @@ VUHDO_I18N_TT_494 = "Zielprofil wählen";
 VUHDO_I18N_TT_495 = "Exportiert alle derzeitig eingestellten eigenen Debuffs in alle Profile dieses Charakters.";
 VUHDO_I18N_TT_496 = "Exportiert alle derzeitig eingestellten eigenen Debuffs in das gewählte Profil.";
 VUHDO_I18N_TT_497 = "Exportiert alle derzeitig eingestellten eigenen Debuffs in alle vorhandenen Profile.";
+VUHDO_I18N_TT_498 = "Check to hide standard Ascension Raid Frames."
 
 
 

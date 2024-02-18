@@ -62,6 +62,22 @@
       			</Scripts>
           </CheckButton>
 
+          <CheckButton name="$parentHideStandardRaidCheckButton" text="VUHDO_I18N_DEST_RAID" inherits="VuhDoCheckButtonTemplate">
+            <Anchors>
+              <Anchor point="TOPLEFT">
+                <Offset>
+                  <AbsDimension x="123" y="-118" />
+                </Offset>
+              </Anchor>
+            </Anchors>
+			      <Scripts>
+			      	<OnLoad>
+			      		VUHDO_lnfSetModel(self, "VUHDO_CONFIG.BLIZZ_UI_HIDE_RAID");
+			      		VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT_498);
+			      	</OnLoad>
+      			</Scripts>
+          </CheckButton>
+
           <CheckButton name="$parentHideStandardPlayerCheckButton" text="VUHDO_I18N_PLAYER" inherits="VuhDoCheckButtonTemplate">
             <Anchors>
               <Anchor point="TOPLEFT">
