@@ -6,7 +6,6 @@ local VUHDO_NAME_TEXTS = { };
 
 local VUHDO_getHealthBar;
 local VUHDO_getBarText;
-local VUHDO_getIncHealOnUnit;
 local VUHDO_getDiffColor;
 local VUHDO_isPanelVisible;
 local VUHDO_updateManaBars;
@@ -65,7 +64,6 @@ function VUHDO_customHealthInitBurst()
  	-- functions
 	VUHDO_getHealthBar = VUHDO_GLOBAL["VUHDO_getHealthBar"];
 	VUHDO_getBarText = VUHDO_GLOBAL["VUHDO_getBarText"];
-	VUHDO_getIncHealOnUnit = VUHDO_GLOBAL["VUHDO_getIncHealOnUnit"];
 	VUHDO_getDiffColor = VUHDO_GLOBAL["VUHDO_getDiffColor"];
 	VUHDO_isPanelVisible = VUHDO_GLOBAL["VUHDO_isPanelVisible"];
 	VUHDO_updateManaBars = VUHDO_GLOBAL["VUHDO_updateManaBars"];
@@ -155,7 +153,7 @@ local tInfo;
 local tOverhealSetup;
 local tValue;
 local tSetup;
-local function _VUHDO_updateIncHeal(aUnit)
+local function VUHDO_updateIncHeal(aUnit)
 	tInfo = VUHDO_RAID[aUnit];
 	tAllButtons = VUHDO_getUnitButtons(VUHDO_resolveVehicleUnit(aUnit));
 
@@ -163,7 +161,7 @@ local function _VUHDO_updateIncHeal(aUnit)
 		return;
 	end
 
-	tAmountInc = VUHDO_getIncHealOnUnit(tInfo["name"]);
+	tAmountInc = UnitGetIncomingHeals(tInfo["name"]);
 	tOverheal = tAmountInc - tInfo["healthmax"] + tInfo["health"];
 	tRatio = tOverheal / tInfo["healthmax"];
 	if (tAmountInc > 0 and tInfo["connected"] and not tInfo["dead"]) then
@@ -227,21 +225,6 @@ local function _VUHDO_updateIncHeal(aUnit)
 		end
 	end
 end
-
-
---
-local function VUHDO_updateIncHeal(aUnit)
-	_VUHDO_updateIncHeal(aUnit)
-
-	if (UnitIsUnit(aUnit, "target")) then
-		_VUHDO_updateIncHeal("target");
-	end
-
-	if (UnitIsUnit(aUnit, "focus")) then
-		_VUHDO_updateIncHeal("focus");
-	end
-end
-
 
 --
 VUHDO_CUSTOM_INFO = {
@@ -403,7 +386,7 @@ function VUHDO_customizeText(aButton, aMode, anIsTarget)
 
 	-- Life Text
 	if (tIsLife and tIsShowLife) then
-		tAmountInc = VUHDO_getIncHealOnUnit(tInfo["name"]);
+		tAmountInc = UnitGetIncomingHeals(tInfo["name"]);
 
 		if (sIsOverhealText) then
 			tLifeAmount = tInfo["health"] + tAmountInc;

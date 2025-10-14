@@ -6,7 +6,6 @@
   <Script file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua" />
   <Script file="Libs\LibShieldLeft-1.0\LibShieldLeft.lua" />
   <Script file="Libs\libdatabroker-1-1\LibDataBroker-1.1.lua" />
-  <Include file="Libs\LibHealComm-4.0\LibHealComm-4.0.xml" />
 
   <Script file="Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua" />
   <Script file="VuhDoLocalization_en.lua" />
@@ -43,7 +42,6 @@
   <Script file="VuhDoTooltip.lua" />
   <Script file="VuhDoAddonAdapter.lua" />
   <Script file="VuhDoCtraAdapter.lua" />
-  <Script file="VuhDoHealCommAdapter.lua" />
   <Script file="VuhDoShieldLeftAdapter.lua" />
   <Script file="VuhDoPallyPowerAdapter.lua" />
   <Script file="VuhDoCombatLogParser.lua" />

@@ -23,10 +23,8 @@ local VUHDO_getNumInUnitCluster;
 local VUHDO_getIsInHiglightCluster;
 local VUHDO_getDebuffColor;
 local VUHDO_getCurrentBouquetColor;
-local VUHDO_getIncHealOnUnit;
 local VUHDO_getUnitDebuffSchoolInfos;
 local VUHDO_getCurrentBouquetStacks;
-local VUHDO_getIncHealOnUnit;
 local sIsInverted;
 local sBarColors;
 
@@ -48,10 +46,8 @@ function VUHDO_bouquetValidatorsInitBurst()
 	VUHDO_getIsInHiglightCluster = VUHDO_GLOBAL["VUHDO_getIsInHiglightCluster"];
 	VUHDO_getDebuffColor = VUHDO_GLOBAL["VUHDO_getDebuffColor"];
 	VUHDO_getCurrentBouquetColor = VUHDO_GLOBAL["VUHDO_getCurrentBouquetColor"];
-	VUHDO_getIncHealOnUnit = VUHDO_GLOBAL["VUHDO_getIncHealOnUnit"];
 	VUHDO_getUnitDebuffSchoolInfos = VUHDO_GLOBAL["VUHDO_getUnitDebuffSchoolInfos"];
 	VUHDO_getCurrentBouquetStacks = VUHDO_GLOBAL["VUHDO_getCurrentBouquetStacks"];
-	VUHDO_getIncHealOnUnit = VUHDO_GLOBAL["VUHDO_getIncHealOnUnit"];
 
 	sIsInverted = VUHDO_INDICATOR_CONFIG["CUSTOM"]["HEALTH_BAR"]["invertGrowth"];
 	sBarColors = VUHDO_PANEL_SETUP["BAR_COLORS"];
@@ -397,7 +393,7 @@ end
 --
 local tOverheal;
 local function VUHDO_overhealHighlightValidator(anInfo, _)
-	tOverheal = VUHDO_getIncHealOnUnit(anInfo["name"]) + anInfo["health"];
+	tOverheal = UnitGetIncomingHeals(anInfo["name"]) + anInfo["health"];
 	if (tOverheal > anInfo["healthmax"]) then
 		VUHDO_brightenColor(VUHDO_getCurrentBouquetColor(), tOverheal / anInfo["healthmax"]);
 	end
@@ -455,7 +451,7 @@ end
 --
 local function VUHDO_statusHealthValidator(anInfo, _)
   if (sIsInverted) then
-		return true, nil, anInfo["health"] + VUHDO_getIncHealOnUnit(anInfo["name"]), -1, anInfo["healthmax"], nil, anInfo["health"];
+		return true, nil, anInfo["health"] + UnitGetIncomingHeals(anInfo["name"]), -1, anInfo["healthmax"], nil, anInfo["health"];
   else
 		return true, nil, anInfo["health"], -1, anInfo["healthmax"], nil, anInfo["health"];
 	end
@@ -479,7 +475,7 @@ end
 
 --
 local function VUHDO_statusIncomingValidator(anInfo, _)
-	return true, nil, VUHDO_getIncHealOnUnit(anInfo["name"]), -1, anInfo["healthmax"], nil, nil;
+	return true, nil, UnitGetIncomingHeals(anInfo["name"]), -1, anInfo["healthmax"], nil, nil;
 end
 
 

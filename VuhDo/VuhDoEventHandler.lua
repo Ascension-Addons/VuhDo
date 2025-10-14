@@ -32,7 +32,6 @@ local VUHDO_updateAllHoTs;
 local VUHDO_updateAllCyclicBouquets;
 local VUHDO_updateAllDebuffIcons;
 local VUHDO_updateAllClusters;
-local VUHDO_clearObsoleteInc;
 local VUHDO_updateBouquetsForEvent;
 local VUHDO_getUnitZoneName;
 local VUHDO_updateClusterHighlights;
@@ -75,7 +74,6 @@ local function VUHDO_eventHandlerInitBurst()
 	VUHDO_updateAllHoTs = VUHDO_GLOBAL["VUHDO_updateAllHoTs"];
 	VUHDO_updateAllCyclicBouquets = VUHDO_GLOBAL["VUHDO_updateAllCyclicBouquets"];
 	VUHDO_updateAllDebuffIcons = VUHDO_GLOBAL["VUHDO_updateAllDebuffIcons"];
-	VUHDO_clearObsoleteInc = VUHDO_GLOBAL["VUHDO_clearObsoleteInc"];
 	VUHDO_updateAllRaidTargetIndices = VUHDO_GLOBAL["VUHDO_updateAllRaidTargetIndices"];
 	VUHDO_updateAllClusters = VUHDO_GLOBAL["VUHDO_updateAllClusters"];
 	VUHDO_updateBouquetsForEvent = VUHDO_GLOBAL["VUHDO_updateBouquetsForEvent"];
@@ -167,6 +165,7 @@ function VUHDO_OnLoad(anInstance)
 	anInstance:RegisterEvent("PLAYER_ENTERING_WORLD");
 	anInstance:RegisterEvent("UNIT_HEALTH");
 	anInstance:RegisterEvent("UNIT_MAXHEALTH");
+	anInstance:RegisterEvent("UNIT_HEAL_PREDICTION");
 	anInstance:RegisterEvent("UNIT_AURA");
 	anInstance:RegisterEvent("UNIT_TARGET");
 
@@ -290,7 +289,6 @@ function VUHDO_initAllBurstCaches()
 	VUHDO_customHotsInitBurst();
 	VUHDO_customDebuffIconsInitBurst();
 	VUHDO_debuffsInitBurst();
-	VUHDO_healCommAdapterInitBurst();
 	VUHDO_buffWatchInitBurst();
 	VUHDO_clusterBuilderInitBurst();
 	VUHDO_bouquetValidatorsInitBurst();
@@ -368,7 +366,6 @@ local function VUHDO_init()
 	VUHDO_clearUndefinedModelEntries();
 	VUHDO_reloadUI();
 	VUHDO_getAutoProfile();
-	VUHDO_setLhcEnabled();
 	VUHDO_setShieldCommEnabled();
 	VUHDO_initCliqueSupport(false);
 	if (VuhDoNewOptionsTabbedFrame ~= nil) then
@@ -420,6 +417,10 @@ function VUHDO_OnEvent(anInstance, anEvent, anArg1, anArg2, anArg3, anArg4, _, a
 	elseif ("UNIT_HEALTH" == anEvent) then
 		if ((VUHDO_RAID or tEmptyRaid)[anArg1] ~= nil) then
 			VUHDO_updateHealth(anArg1, 2); -- VUHDO_UPDATE_HEALTH
+		end
+	elseif ("UNIT_HEAL_PREDICTION" == anEvent) then
+		if ((VUHDO_RAID or tEmptyRaid)[anArg1] ~= nil) then
+			VUHDO_updateHealthBarsFor(anArg1, 9); -- VUHDO_UPDATE_INC
 		end
 	elseif ("UNIT_MANA" == anEvent
 		or "UNIT_ENERGY" == anEvent
@@ -1325,8 +1326,6 @@ function VUHDO_OnUpdate(anInstance, aTimeDelta)
 			if (VuhDoTooltip:IsShown()) then
 				VUHDO_updateTooltip();
 			end
-
-			VUHDO_clearObsoleteInc();
 		end
 	end
 

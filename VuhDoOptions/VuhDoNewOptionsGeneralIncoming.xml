@@ -378,9 +378,6 @@
           </Frame>
         </Frames>
       </Frame>
-	    <Scripts>
-    	  <OnHide>VUHDO_setLhcEnabled()</OnHide>
-    	</Scripts>
     </Frames>
   </Frame>
 </Ui>
